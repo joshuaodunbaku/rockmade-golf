@@ -1,0 +1,6 @@
+.btn-signup {
+  /* display: none !important; */
+  background-color: var(--secondary-color) !important;
+  color: white !important;
+  border: none !important;
+}
