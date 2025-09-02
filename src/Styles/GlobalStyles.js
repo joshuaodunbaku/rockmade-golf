@@ -1,4 +1,5 @@
 import { createGlobalStyle } from "styled-components";
+import IMAGES from "../assets/images";
 
 const GlobalStyle = createGlobalStyle`
   /* Importing Google Fonts */
@@ -23,7 +24,6 @@ const GlobalStyle = createGlobalStyle`
   /* General Styles */
   body {
     background-color: var(--background-light) !important;
-    /* color: var(--text-color); */
     font-family: 'Mulish', serif;
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
@@ -42,18 +42,6 @@ const GlobalStyle = createGlobalStyle`
     /* color: #646cff; */
     text-decoration: inherit;
   }
-
-  /* a:hover { */
-  a:hover {
-    /* color: #535bf2; */
-  }
-
-  /* Heading Styles */
-  h1 {
-    /* font-size: 3.2em;
-    line-height: 1.1; */
-  }
-
   h1, h2, h3, h4, h5, h6 {
     font-family: "Bricolage Grotesque", sans-serif !important;
     font-optical-sizing: auto;
@@ -110,6 +98,71 @@ const GlobalStyle = createGlobalStyle`
     background-clip: padding-box, border-box;
   }
 
+/*---------------------------------------
+  ABOUT              
+-----------------------------------------*/
+.about-section { 
+  background-image: url(${IMAGES.image1});
+  background-color: #704010; /* fallback */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  z-index: 0;
+  padding: 40px 0
+}
+
+.about-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(32, 77, 14, 0.4); /* overlay color with opacity */
+  backdrop-filter: blur(8px);          /* blur effect */
+  -webkit-backdrop-filter: blur(8px); /* safari support */
+  z-index: 1;
+}
+
+/* put your content ABOVE the overlay */
+.about-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+.about-image {
+  border-radius: 50px;
+  display: block;
+}
+
+.about-text-wrap {
+  position: relative;
+}
+
+.about-text-icon {
+  background: var(--primary-color);
+  border-radius: 100%;
+  font-size: var(--h3-font-size);
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  text-align: center;
+}
+
+.about-text-info {
+  backdrop-filter: blur(5px) saturate(180%);
+  -webkit-backdrop-filter: blur(5px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.45);
+  border-radius: 50px;
+  border: 1px solid rgba(209, 213, 219, 0.3);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: 20px;
+  padding: 15px;
+  max-height: 80%;
+}
+
+
   ///////////////////////////////////////////* Font family classes *///////////////////////////////////////////
   .space-grotesk {
     font-family: "Space Grotesk", sans-serif !important;
@@ -156,52 +209,6 @@ const GlobalStyle = createGlobalStyle`
     font-optical-sizing: auto;
     font-style: normal;
   }
-
-/*---------------------------------------
-  ABOUT              
------------------------------------------*/
-.about-section {
-  background-image: url(${`IMAGES`});
-  background-color: #704010;
-  background-repeat: no-repeat;
-  background-size: cover;
-  position: relative;
-}
-
-.about-image {
-  border-radius: var(--border-radius-medium);
-  display: block;
-}
-
-.about-text-wrap {
-  position: relative;
-}
-
-.about-text-icon {
-  background: var(--primary-color);
-  border-radius: 100%;
-  font-size: var(--h3-font-size);
-  width: 70px;
-  height: 70px;
-  line-height: 70px;
-  text-align: center;
-}
-
-.about-text-info {
-  backdrop-filter: blur(5px) saturate(180%);
-  -webkit-backdrop-filter: blur(5px) saturate(180%);
-  background-color: rgba(255, 255, 255, 0.75);
-  border-radius: var(--border-radius-medium);
-  border: 1px solid rgba(209, 213, 219, 0.3);
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  margin: 20px;
-  padding: 35px;
-}
-
-
  
 `;
 

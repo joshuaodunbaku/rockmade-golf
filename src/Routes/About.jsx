@@ -9,17 +9,23 @@ const About = () => {
       <HeroComp $heroImage={IMAGES.image1} height={"30vh"}>
         <div>
           <h3 className="display-4 fw-bold">
-            About the <span className="text-success">Organization</span>
+            About <span className="text-success">Us</span>
           </h3>
-          <p className="lead">
+          {/* <p className="lead fw-bold">
             Connecting golfers, building competition, and making every swing
             count.
-          </p>
+          </p> */}
         </div>
       </HeroComp>
+
       <Container className="my-5">
-        <h2 className="text-center mb-4">Our Story</h2>
-        <p className="text-center">
+        <h2 className="text-center mb-4">
+          <span className="fw-bold" style={{ color: "var(--primary-color)" }}>
+            RockMade
+          </span>{" "}
+          Golf
+        </h2>
+        <p className="text-center mx-auto w-75">
           RockMadeGolf was created out of a passion for the game and a desire to
           make it more engaging. Traditional scorekeeping and golf communities
           are often fragmented. Our platform brings golfers together, offering
@@ -51,50 +57,43 @@ const About = () => {
         </Row>
       </Container>
       {/*  */}
-      <section class="about-section section-padding" id="section_2">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-6 col-12 mb-4 mb-lg-0 d-flex align-items-center">
-              <div class="services-info">
-                <h2 class="text-white mb-4">About Festava 2022</h2>
-
-                <p class="text-white">
-                  Festava Live is free CSS template provided by TemplateMo
-                  website. This layout is built on Bootstrap v5.2.2 CSS library.
-                  You are free to use this template for your commercial website.
+      <section className="about-section section-padding" id="section_2">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-6 col-12 mb-4 mb-lg-0 d-flex align-items-center">
+              <div className="services-info">
+                <h2 className="text-white mb-4">About RockMade Golf</h2>
+                <p className="text-white">
+                  RockMade Golf is a modern golf community platform that
+                  connects players of all levels to enjoy, compete, and track
+                  their progress.
                 </p>
-
-                <h6 class="text-white mt-4">Once in Lifetime Experience</h6>
-
-                <p class="text-white">
-                  You are not allowed to redistribute the template ZIP file on
-                  any other website without a permission.
-                </p>
-
-                <h6 class="text-white mt-4">Whole Night Party</h6>
-
-                <p class="text-white">
-                  Please tell your friends about our website. Thank you.
+                <h6 className="text-white mt-4">Golf for Everyone</h6>
+                <p className="text-white">
+                  Whether you’re a beginner learning your first swing or a pro
+                  chasing tournaments, RockMade Golf creates the perfect
+                  experience for you.
                 </p>
               </div>
             </div>
 
-            <div class="col-lg-6 col-12">
-              <div class="about-text-wrap">
+            <div className="col-lg-6 col-12">
+              <div className="about-text-wrap">
                 <img
-                  src="images/pexels-alexander-suhorucov-6457579.jpg"
-                  class="about-image img-fluid"
+                  src={IMAGES.image1}
+                  alt="golf course"
+                  className="about-image img-fluid"
                 />
-
-                <div class="about-text-info d-flex">
-                  <div class="d-flex">
-                    <i class="about-text-icon bi-person"></i>
+                <div className="about-text-info d-flex">
+                  <div className="d-flex">
+                    <i className="about-text-icon bi-person"></i>
                   </div>
-
-                  <div class="ms-4">
-                    <h3>a happy moment</h3>
-
-                    <p class="mb-0">your amazing festival experience with us</p>
+                  <div className="ms-4">
+                    <h3>Play Together</h3>
+                    <p className="mb-0">
+                      Join games, challenge friends, and enjoy golf like never
+                      before.
+                    </p>
                   </div>
                 </div>
               </div>
