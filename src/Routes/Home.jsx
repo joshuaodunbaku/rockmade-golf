@@ -25,13 +25,13 @@ const Home = () => {
                 <div class="carousel-item active">
                   <div class="container position-relative h-100">
                     <div class="carousel-caption d-flex flex-column justify-content-center">
-                      <small class="small-title">
+                      <span class="small-title fs-5">
                         Golf Reimagined with{" "}
                         <strong class="text-warning">RockMadeGolf</strong>
-                      </small>
+                      </span>
 
                       <h1>Play. Compete. Connect.</h1>
-                      <p>
+                      <p className="fs-5 d-none d-sm-block">
                         {" "}
                         Experience golf like never before with games,
                         tournaments, and challenges. Explore
@@ -47,7 +47,7 @@ const Home = () => {
 
                   <div class="carousel-image-wrap">
                     <img
-                      src={IMAGES.image1}
+                      src={IMAGES.image4}
                       class="img-fluid carousel-image"
                       alt=""
                     />
@@ -57,9 +57,9 @@ const Home = () => {
                 <div class="carousel-item">
                   <div class="container position-relative h-100">
                     <div class="carousel-caption d-flex flex-column justify-content-center">
-                      <small class="small-title">
+                      <span class="small-title fs-5">
                         Challenge <strong class="text-warning">Yourself</strong>
-                      </small>
+                      </span>
 
                       <h1>
                         Compete in tournaments or versus matches to test{" "}
@@ -93,15 +93,15 @@ const Home = () => {
                 <div class="carousel-item">
                   <div class="container position-relative h-100">
                     <div class="carousel-caption d-flex flex-column justify-content-center">
-                      <small class="small-title fw-bold">
+                      <span class="small-title fw-bold fs-5">
                         Track Your{" "}
                         <strong class="text-warning">Progress</strong>
-                      </small>
+                      </span>
 
                       <h1 className="fw-bold">
                         Join the <span class="text-warning">Leaderboard</span>
                       </h1>
-                      <p>
+                      <p className="fs-5 d-none d-sm-block">
                         Follow your handicap and climb the leaderboard while
                         enjoying the game you love.{" "}
                       </p>
@@ -123,7 +123,7 @@ const Home = () => {
 
                   <div class="carousel-image-wrap">
                     <img
-                      src={IMAGES.image2}
+                      src={IMAGES.image1}
                       class="img-fluid carousel-image"
                       alt=""
                     />
@@ -184,7 +184,7 @@ const Home = () => {
         <h2 className="text-center mb-4 display-5 fw-bold">Our Game Modes</h2>
         <Row>
           <Col md={4} className="p-2">
-            <GameModeCard bg={IMAGES.image1}>
+            <GameModeCard bg={IMAGES.image3}>
               <div className="overlay d-flex flex-column justify-content-center align-items-center">
                 <h2 className="">Member Game</h2>
                 <p>
@@ -199,7 +199,7 @@ const Home = () => {
             </GameModeCard>
           </Col>
           <Col md={4} className="p-2">
-            <GameModeCard bg={IMAGES.image2}>
+            <GameModeCard bg={IMAGES.image5}>
               <div className="overlay d-flex flex-column justify-content-center align-items-center">
                 <h2 className="">Tournament Game</h2>
                 <p>
@@ -213,7 +213,7 @@ const Home = () => {
             </GameModeCard>
           </Col>
           <Col md={4} className="p-2">
-            <GameModeCard bg={IMAGES.image3}>
+            <GameModeCard bg={IMAGES.image2}>
               <div className="overlay d-flex flex-column justify-content-center align-items-center">
                 <h2 className="">Versus Game</h2>
                 <p>

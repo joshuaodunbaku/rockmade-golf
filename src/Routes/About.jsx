@@ -2,6 +2,10 @@ import React from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import HeroComp from "../Components/HeroComp";
 import IMAGES from "../assets/images";
+import { BiCheckCircle } from "react-icons/bi";
+import { BsCheckCircleFill } from "react-icons/bs";
+import { GiCheckMark, GiFamilyTree } from "react-icons/gi";
+import { IoGolf } from "react-icons/io5";
 
 const About = () => {
   return (
@@ -19,40 +23,155 @@ const About = () => {
       </HeroComp>
 
       <Container className="my-5">
-        <h2 className="text-center mb-4">
+        <h2 className="text-center mb-4 display-6">
           <span className="fw-bold" style={{ color: "var(--primary-color)" }}>
             RockMade
           </span>{" "}
           Golf
         </h2>
-        <p className="text-center mx-auto w-75">
+        <p className="text-center mx-auto w-75 fs-5">
           RockMadeGolf was created out of a passion for the game and a desire to
           make it more engaging. Traditional scorekeeping and golf communities
           are often fragmented. Our platform brings golfers together, offering
           fun modes of play, social connections, and competitive tournaments.
         </p>
+        <div className="d-flex flex-column align-items-center justify-content-center mt-5">
+          <h3 className="text-center fw-bold h2">Why Join Us</h3>
+          <div className="fs-5">
+            <p>
+              <GiCheckMark color="green" /> Lorem ipsum dolor sit amet
+              consectetur adipisicing elit.
+            </p>
+            <p>
+              <GiCheckMark color="green" /> Error aliquam delectus pariatur quam
+              deserunt facere sed.
+            </p>
+            <p>
+              <GiCheckMark color="green" /> Lorem ipsum dolor sit amet
+              consectetur adipisicing elit.
+            </p>
+            <p>
+              <GiCheckMark color="green" /> Lorem ipsum dolor sit amet
+              consectetur adipisicing elit.
+            </p>
+            <p>
+              <GiCheckMark color="green" /> Error aliquam delectus pariatur quam
+              deserunt facere sed.
+            </p>
+            <p>
+              <GiCheckMark color="green" /> Error aliquam delectus pariatur quam
+              deserunt facere sed.
+            </p>
+            <p>
+              <GiCheckMark color="green" /> Lorem ipsum dolor sit amet
+              consectetur adipisicing elit.
+            </p>
+            <p>
+              <GiCheckMark color="green" /> Error aliquam delectus pariatur quam
+              deserunt facere sed.
+            </p>
+            <p>
+              <GiCheckMark color="green" /> Lorem ipsum dolor sit amet
+              consectetur adipisicing elit.
+            </p>
+          </div>
+        </div>
       </Container>
-
-      {/* Mission & Vision */}
+      {/* Features Highlight */}
       <Container className="my-5">
+        <h2 className="text-center">Our Match Modes</h2>
+        <Row className="mt-4">
+          <Col md={4} className="mb-3">
+            <div className="p-3 border h-100">
+              <h3>
+                {" "}
+                <IoGolf className="me-2" color="var(--primary-color)" /> Member
+                Games
+              </h3>
+              <p>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eius
+                vero expedita?
+              </p>
+            </div>
+          </Col>
+          <Col md={4} className="mb-3">
+            <div className="p-3 border h-100">
+              <h3>
+                {" "}
+                <GiFamilyTree
+                  className="me-2"
+                  color="var(--secondary-color)"
+                />{" "}
+                Tournament Games
+              </h3>
+              <p>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eius
+                vero expedita?
+              </p>
+            </div>
+          </Col>
+          <Col md={4} className="mb-3">
+            <div className="p-3 border h-100">
+              <h3>
+                {" "}
+                <img
+                  className="me-2"
+                  src={IMAGES.versus_icon}
+                  width={"40px"}
+                  alt=""
+                />{" "}
+                Versus Games
+              </h3>
+              <p>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eius
+                vero expedita?
+              </p>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+      {/*  */}
+      {/* Mission & Vision */}
+      <Container className="mt-5 fs-5">
         <Row>
           <Col md={6} className="text-center">
-            <Card className="p-4 shadow border-0 h-100">
-              <h3 style={{ color: "var(--primary-color)" }}>Our Mission</h3>
+            <div className="h-100 d-flex flex-column justify-content-center align-items-center p-4">
+              <h3
+                className="display-6 fw-bold"
+                style={{ color: "var(--primary-color)" }}
+              >
+                Our Mission
+              </h3>
               <p>
                 To make golf accessible, engaging, and competitive for every
                 player, from casual beginners to seasoned professionals.
               </p>
-            </Card>
+            </div>
+          </Col>
+          <Col className="px-0" md={"6"}>
+            <img src={IMAGES.image1} className="img-fluid" alt="" />
+          </Col>
+        </Row>
+      </Container>
+      {/*  */}
+      <Container className="mb-5 fs-5">
+        <Row>
+          <Col className="px-0" md={"6"}>
+            <img src={IMAGES.image3} className="img-fluid" alt="" />
           </Col>
           <Col md={6} className="text-center">
-            <Card className="p-4 shadow border-0 h-100">
-              <h3 style={{ color: "var(--secondary-color)" }}>Our Vision</h3>
+            <div className="h-100 d-flex flex-column justify-content-center align-items-center p-4">
+              <h3
+                className="display-6 fw-bold"
+                style={{ color: "var(--secondary-color)" }}
+              >
+                Our Vision
+              </h3>
               <p>
                 We envision a global golfing community where every game,
                 tournament, and rivalry is connected through RockMadeGolf.
               </p>
-            </Card>
+            </div>
           </Col>
         </Row>
       </Container>
@@ -113,7 +232,7 @@ const About = () => {
             "Fair Play",
             "Passion",
           ].map((value, idx) => (
-            <Col key={idx} md={2} sm={6} className="mb-3">
+            <Col md={2} sm={6} className="mb-3">
               <Card className="p-3 shadow border-0">
                 <h5 style={{ color: "var(--primary-color)" }}>{value}</h5>
               </Card>
@@ -122,57 +241,109 @@ const About = () => {
         </Row>
       </Container>
 
-      {/* How It Works */}
-      <Container className="my-5 text-center">
-        <h2>How RockMadeGolf Works</h2>
-        <Row className="mt-4">
-          <Col md={3} sm={6} className="mb-3">
-            <Card className="p-3 shadow h-100">
-              <h5>1. Sign Up</h5>
-              <p>Create your profile and join the community.</p>
-            </Card>
-          </Col>
-          <Col md={3} sm={6} className="mb-3">
-            <Card className="p-3 shadow h-100">
-              <h5>2. Choose a Mode</h5>
-              <p>Pick between Normal, Tournament, or Versus games.</p>
-            </Card>
-          </Col>
-          <Col md={3} sm={6} className="mb-3">
-            <Card className="p-3 shadow h-100">
-              <h5>3. Play & Compete</h5>
-              <p>Hit the course, track your performance, and compete.</p>
-            </Card>
-          </Col>
-          <Col md={3} sm={6} className="mb-3">
-            <Card className="p-3 shadow h-100">
-              <h5>4. Track Performance</h5>
-              <p>Monitor stats and climb the leaderboard.</p>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-
-      {/* Features Highlight */}
-      <Container className="my-5 text-center">
-        <h2>Key Features</h2>
-        <Row className="mt-4">
-          {[
-            "Normal Games: Fun and practice sessions",
-            "Tournament Mode: Compete on a bigger stage",
-            "Versus Mode: Challenge your friends",
-            "Profiles & Stats: Track your journey",
-            "Community Features: Connect with others",
-          ].map((feature, idx) => (
-            <Col md={4} key={idx} className="mb-3">
-              <Card className="p-3 shadow h-100">
-                <p>{feature}</p>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
-
+      {/* <div className="row mb-n12">
+        <div className="col-12 col-lg-6 mb-12">
+          <div className="mw-md">
+            <div className="d-flex align-items-center mb-4">
+              <div
+                className="d-inline-flex align-items-center justify-content-center bg-light rounded-pill"
+                style={{ width: "32px", height: "32px" }}
+              >
+                🏥
+              </div>
+              <h5 className="ms-3 mb-0">Inclusive Health Package</h5>
+            </div>
+            <p className="mb-0 text-light-dark">
+              We care for your well-being with dental and vision benefits. No
+              health expense stress.
+            </p>
+          </div>
+        </div>
+        <div className="col-12 col-lg-6 mb-12">
+          <div className="mw-md">
+            <div className="d-flex align-items-center mb-4">
+              <div
+                className="d-inline-flex align-items-center justify-content-center bg-light rounded-pill"
+                style={{ width: "32px", height: "32px" }}
+              >
+                🏋
+              </div>
+              <h5 className="ms-3 mb-0">Free Gym Membership</h5>
+            </div>
+            <p className="mb-0 text-light-dark">
+              Enjoy a complimentary gym membership for your fitness and
+              well-being.
+            </p>
+          </div>
+        </div>
+        <div className="col-12 col-lg-6 mb-12">
+          <div className="mw-md">
+            <div className="d-flex align-items-center mb-4">
+              <div
+                className="d-inline-flex align-items-center justify-content-center bg-light rounded-pill"
+                style={{ width: "32px", height: "32px" }}
+              >
+                🕞
+              </div>
+              <h5 className="ms-3 mb-0">Flexible Working Style</h5>
+            </div>
+            <p className="mb-0 text-light-dark">
+              We are 100% remote-friendly, work with team mates from different
+              time zones.
+            </p>
+          </div>
+        </div>
+        <div className="col-12 col-lg-6 mb-12">
+          <div className="mw-md">
+            <div className="d-flex align-items-center mb-4">
+              <div
+                className="d-inline-flex align-items-center justify-content-center bg-light rounded-pill"
+                style={{ width: "32px", height: "32px" }}
+              >
+                🏖️
+              </div>
+              <h5 className="ms-3 mb-0">Balanced Working Life</h5>
+            </div>
+            <p className="mb-0 text-light-dark">
+              We offer a flexible 4-weeks vacation policy. Recharge whenever you
+              need to.
+            </p>
+          </div>
+        </div>
+        <div className="col-12 col-lg-6 mb-12">
+          <div className="mw-md">
+            <div className="d-flex align-items-center mb-4">
+              <div
+                className="d-inline-flex align-items-center justify-content-center bg-light rounded-pill"
+                style={{ width: "32px", height: "32px" }}
+              >
+                🌍
+              </div>
+              <h5 className="ms-3 mb-0">Diversity and Inclusion</h5>
+            </div>
+            <p className="mb-0 text-light-dark">
+              Our strength lies in team members diversity and inclusive culture.
+            </p>
+          </div>
+        </div>
+        <div className="col-12 col-lg-6 mb-12">
+          <div className="mw-md">
+            <div className="d-flex align-items-center mb-4">
+              <div
+                className="d-inline-flex align-items-center justify-content-center bg-light rounded-pill"
+                style={{ width: "32px", height: "32px" }}
+              >
+                💰
+              </div>
+              <h5 className="ms-3 mb-0">Generous Perks Program</h5>
+            </div>
+            <p className="mb-0 text-light-dark">
+              We provide perk stipends for home office, learning, wellness, and
+              connectivity.
+            </p>
+          </div>
+        </div>
+      </div> */}
       {/* Team Section */}
       <Container className="my-5 text-center">
         <h2>Meet the Team</h2>
