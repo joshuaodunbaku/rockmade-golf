@@ -6,6 +6,7 @@ import { BiCheckCircle } from "react-icons/bi";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { GiCheckMark, GiFamilyTree } from "react-icons/gi";
 import { IoGolf } from "react-icons/io5";
+import { MdSportsGolf } from "react-icons/md";
 
 const About = () => {
   return (
@@ -224,17 +225,18 @@ const About = () => {
       {/* Core Values */}
       <Container className="my-5 text-center">
         <h2>Our Core Values</h2>
-        <Row className="mt-4">
+        <Row className="mt-4 d-flex justify-content-center">
           {[
-            "Sportsmanship",
-            "Innovation",
-            "Community",
-            "Fair Play",
-            "Passion",
-          ].map((value, idx) => (
-            <Col md={2} sm={6} className="mb-3">
-              <Card className="p-3 shadow border-0">
-                <h5 style={{ color: "var(--primary-color)" }}>{value}</h5>
+            { name: "Sportsmanship", icon: IMAGES.svg_playing_golf },
+            { name: "Innovation", icon: IMAGES.svg_idea },
+            { name: "Community", icon: IMAGES.svg_online_community_SECONDARY },
+            { name: "Fair Play", icon: IMAGES.svg_golf },
+            { name: "Passion", icon: IMAGES.svg_team_SECONDARY },
+          ].map(({ name, icon }, idx) => (
+            <Col key={idx} md={2} sm={6} className="mb-3 mx-center">
+              <Card className="p-3 shadow-sm d-flex flex-column align-items-center align-items-evenly gap-3">
+                <img src={icon} width={"55px"} height={"55px"} />
+                <h5>{name}</h5>
               </Card>
             </Col>
           ))}

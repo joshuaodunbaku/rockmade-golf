@@ -300,11 +300,11 @@ const Home = () => {
         id="section_5"
         fluid
         className="my-5 text-center p-5"
-        style={{ background: "var(--tertiary-color)" }}
+        // style={{ background: "var(--tertiary-color)" }}
       >
         <div className="container">
           <h2>How It Works</h2>
-          <p>
+          <p className="w-sm-75 mx-auto">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
             accusamus iure itaque, ut possimus odit rerum dolores veritatis
             cupiditate velit facere voluptatibus aut eos, fuga aliquam nisi cum
@@ -351,6 +351,49 @@ const Home = () => {
         </div>
       </Container>
       {/*  */}
+      <div className="my-5 text-white" id="section-4">
+        <div className="container-fluid">
+          <div className="row child-1">
+            <div className="col-md-6 p-0 m-0">
+              <img
+                className=""
+                src={IMAGES.image1}
+                width={"100%"}
+                height={"100%"}
+                alt=""
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center", // focus left (use "right center" to focus right)
+                  //   height: "500px",
+                }}
+              />
+            </div>
+            <div className="col-md-6 d-flex align-items-center p-3 p-md-5 py-5">
+              <div className="p-md-5">
+                <h3 className="display-5 fw-bold mb-4">
+                  A very Lovely Welcome <br /> to our company
+                </h3>
+                <p>
+                  Join us for a comprehensive support program designed
+                  specifically for parents in the Medway area facing financial
+                  challenges.
+                </p>
+                <div className="btn-div">
+                  <Link to={"about"}>
+                    <Button
+                      variant="outline-light"
+                      className="rounded-0 btn-lg d-flex justify-content-center align-items-center gap-2"
+                    >
+                      Know More About Us <BiArrowToRight />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="text-center container mt-4" id="section_6">
         <h3 className="display-5 mb-3 fw-bold">Top Players</h3>
         <div className="row">
@@ -420,48 +463,6 @@ const Home = () => {
         </div>
       </div>
       {/*  */}
-      <div className="my-5 text-white" id="section-4">
-        <div className="container-fluid">
-          <div className="row child-1">
-            <div className="col-md-6 p-0 m-0">
-              <img
-                className=""
-                src={IMAGES.image1}
-                width={"100%"}
-                height={"100%"}
-                alt=""
-                style={{
-                  objectFit: "cover",
-                  objectPosition: "center", // focus left (use "right center" to focus right)
-                  //   height: "500px",
-                }}
-              />
-            </div>
-            <div className="col-md-6 d-flex align-items-center p-3 p-md-5 py-5">
-              <div className="p-md-5">
-                <h3 className="display-5 fw-bold mb-4">
-                  A very Lovely Welcome <br /> to our company
-                </h3>
-                <p>
-                  Join us for a comprehensive support program designed
-                  specifically for parents in the Medway area facing financial
-                  challenges.
-                </p>
-                <div className="btn-div">
-                  <Link to={"about"}>
-                    <Button
-                      variant="outline-light"
-                      className="rounded-0 btn-lg d-flex justify-content-center align-items-center gap-2"
-                    >
-                      Know More About Us <BiArrowToRight />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </Wrapper>
   );
 };

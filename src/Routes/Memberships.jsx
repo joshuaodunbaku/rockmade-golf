@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import HeroComp from "../Components/HeroComp";
 import IMAGES from "../assets/images";
+import ScoreTable from "./ScoreTable";
 
 const Memberships = () => {
   return (
@@ -18,6 +19,10 @@ const Memberships = () => {
           </p>
         </div>
       </HeroComp>
+
+      <div className="container">
+        <ScoreTable />
+      </div>
     </div>
   );
 };
