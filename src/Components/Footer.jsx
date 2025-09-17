@@ -10,7 +10,7 @@ const Footer = () => {
             <div className="col-6">
               <h3
                 className="fw-bold"
-                style={{ color: "var(-secondary-color)" }}
+                style={{ color: "var(--secondary-color)" }}
               >
                 Links
               </h3>
@@ -24,12 +24,22 @@ const Footer = () => {
               </div>
             </div>
             <div className="col-3">
-              <h3>Hava a question?</h3>
+              <h3
+                className="fw-bold"
+                style={{ color: "var(--secondary-color)" }}
+              >
+                Hava a question?
+              </h3>
               <div>090-080-0760</div>
               <div>hello@company.com</div>
             </div>
             <div className="col-3">
-              <h3>Location</h3>
+              <h3
+                className="fw-bold"
+                style={{ color: "var(--secondary-color)" }}
+              >
+                Location
+              </h3>
               <p>
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Totam,
                 quis. Fugit impedit commodi perferendis.

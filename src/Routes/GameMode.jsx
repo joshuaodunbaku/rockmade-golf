@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Card, Button, Row, Col, Form, Container } from "react-bootstrap";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  Form,
+  Container,
+  Modal,
+} from "react-bootstrap";
 import { GameModeCard } from "../Styles/HomeStyle";
 import IMAGES from "../assets/images";
 import HeroComp from "../Components/HeroComp";
@@ -12,10 +20,11 @@ const GameMode = () => {
   const [course, setCourse] = useState("");
   const [holeType, setHoleType] = useState("18");
   const [gameFormat, setGameFormat] = useState("Stroke Play");
-  const [features, setFeatures] = useState([]);
+  const [features, setFeatures] = useState({});
   const [players, setPlayers] = useState(["You", "", "", ""]); // 4 slots
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
-  // Available data
   const gameModes = [
     {
       name: "Member Game",
@@ -49,22 +58,43 @@ const GameMode = () => {
   ];
 
   const registeredPlayers = [
-    "Obarinsola Olatunji",
-    "Olumide Olumide",
-    "Joshua Josh",
-    "Charles Bob",
-    "Henry Danger",
-    "Jesse Lee Peterson",
+    {
+      name: "Obarinsola Olatunji",
+      image: IMAGES.player1,
+      handicap: "+2",
+      tee: "60",
+    },
+    {
+      name: "Olumide Olumide",
+      image: IMAGES.player2,
+      handicap: "0",
+      tee: "58",
+    },
+    {
+      name: "Joshua Josh",
+      image: IMAGES.player3,
+      handicap: "+1",
+      tee: "59",
+    },
+    {
+      name: "Charles Bob",
+      image: IMAGES.player4,
+      handicap: "-1",
+      tee: "61",
+    },
+    {
+      name: "Henry Danger",
+      image: IMAGES.player5,
+      handicap: "+3",
+      tee: "62",
+    },
+    {
+      name: "Jesse Lee Peterson",
+      image: IMAGES.player6,
+      handicap: "+4",
+      tee: "57",
+    },
   ];
-
-  // Handle checkbox toggle
-  const toggleFeature = (feature) => {
-    setFeatures((prev) =>
-      prev.includes(feature)
-        ? prev.filter((f) => f !== feature)
-        : [...prev, feature]
-    );
-  };
 
   return (
     <>
@@ -106,7 +136,6 @@ const GameMode = () => {
             </Row>
           </div>
         )}
-
         {step === 2 && (
           <div className="p-5 border rounded-4 bg-light shadow">
             <div className="text-center">
@@ -159,7 +188,6 @@ const GameMode = () => {
             </div>
           </div>
         )}
-
         {step === 3 && (
           <div className="p-5 border rounded-4 bg-light shadow">
             <div>
@@ -177,7 +205,6 @@ const GameMode = () => {
                   </Form.Select>
                 </Form.Group>
 
-                {/* Features per Hole */}
                 <Form.Group className="mb-3">
                   <Form.Label>Assign Features Per Hole</Form.Label>
                   <div
@@ -212,7 +239,7 @@ const GameMode = () => {
                               }
                               onChange={() => {
                                 setFeatures((prev) => {
-                                  const updated = { ...prev };
+                                  const updated = { ...(prev || {}) };
                                   const holeFeatures =
                                     updated[holeNumber] || [];
 
@@ -236,7 +263,6 @@ const GameMode = () => {
                 </Form.Group>
               </Form>
 
-              {/* Navigation */}
               <div className="text-center">
                 <Button
                   variant="secondary"
@@ -256,69 +282,78 @@ const GameMode = () => {
             <div className="text-center">
               <h2 className="mb-4">Add Players</h2>
 
-              <div
-                className="player-grid"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                  gap: "1.5rem",
-                }}
-              >
-                {players.map((player, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3 border rounded bg-light d-flex flex-column align-items-center shadow-sm"
-                  >
-                    {/* Player Image */}
-                    <img
-                      src={
-                        idx === 0
-                          ? "/images/default-user.png" // Replace with your user profile image
-                          : "/images/add-player.png" // Replace with placeholder image
-                      }
-                      alt={`Player ${idx + 1}`}
+              {/* PLAYER GRID */}
+              <div className="mb-4">
+                <h5 className="text-start fw-bold mb-3">Group 1</h5>
+
+                <div
+                  className="player-grid"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(160px, 1fr))",
+                    gap: "1rem",
+                  }}
+                >
+                  {players.map((player, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 border rounded bg-white d-flex flex-column align-items-center justify-content-center shadow-sm"
                       style={{
-                        width: "80px",
-                        height: "80px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                        marginBottom: "1rem",
+                        minHeight: "150px",
+                        cursor: idx === 0 ? "default" : "pointer",
                       }}
-                    />
-
-                    {/* Player Label */}
-                    <h6 className="fw-bold mb-2">Player {idx + 1}</h6>
-
-                    {/* Input / Dropdown */}
-                    {idx === 0 ? (
-                      <Form.Control
-                        type="text"
-                        value={player}
-                        disabled
-                        className="text-center fw-bold"
-                      />
-                    ) : (
-                      <Form.Select
-                        value={player}
-                        onChange={(e) => {
-                          const newPlayers = [...players];
-                          newPlayers[idx] = e.target.value;
-                          setPlayers(newPlayers);
-                        }}
-                      >
-                        <option value="">-- Select Player --</option>
-                        {registeredPlayers.map((rp, i) => (
-                          <option key={i} value={rp}>
-                            {rp}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    )}
-                  </div>
-                ))}
+                      onClick={() => {
+                        if (idx !== 0) {
+                          setSelectedSlot(idx);
+                          setShowModal(true);
+                        }
+                      }}
+                    >
+                      {player ? (
+                        <>
+                          <img
+                            src={player.image}
+                            alt={player.name}
+                            style={{
+                              width: "60px",
+                              height: "60px",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                              marginBottom: "0.5rem",
+                            }}
+                          />
+                          <h6 className="fw-bold">{player.name}</h6>
+                          <small className="text-muted">
+                            HC: {player.handicap} | Tee: {player.tee}
+                          </small>
+                        </>
+                      ) : (
+                        <div className="text-center text-muted">
+                          <div
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "50%",
+                              background: "#e9ecef",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "24px",
+                              margin: "0 auto 0.5rem",
+                            }}
+                          >
+                            +
+                          </div>
+                          <span>Add Player</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              {/* Navigation Buttons */}
+              {/* NAVIGATION */}
               <div className="mt-4">
                 <Button
                   variant="secondary"
@@ -335,6 +370,82 @@ const GameMode = () => {
                 </Button>
               </div>
             </div>
+
+            {/* PLAYER SELECTION MODAL */}
+            {/* PLAYER SELECTION MODAL */}
+            <Modal
+              show={showModal}
+              onHide={() => {
+                setShowModal(false);
+                setSelectedSlot(null);
+              }}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Select a Player</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="d-flex flex-column gap-2">
+                  {registeredPlayers.map((thatRegisteredPlayer, index) => {
+                    const alreadyPicked = players.some(
+                      (p) => p && p.name === thatRegisteredPlayer.name
+                    );
+
+                    return (
+                      <div
+                        key={index}
+                        className={`p-3 border rounded d-flex align-items-center shadow-sm ${
+                          alreadyPicked
+                            ? "bg-dark-subtle text-muted"
+                            : "hover-bg-light"
+                        }`}
+                        style={{
+                          cursor: alreadyPicked ? "not-allowed" : "pointer",
+                        }}
+                        onClick={() => {
+                          if (selectedSlot === null || alreadyPicked) return;
+                          const newPlayers = [...players];
+                          newPlayers[selectedSlot] = thatRegisteredPlayer;
+                          setPlayers(newPlayers);
+                          setShowModal(false);
+                          setSelectedSlot(null);
+                        }}
+                      >
+                        <img
+                          src={thatRegisteredPlayer.image}
+                          alt={thatRegisteredPlayer.name}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                            marginRight: "1rem",
+                            opacity: alreadyPicked ? 0.5 : 1,
+                          }}
+                        />
+                        <div className="flex-grow-1">
+                          <h6 className="fw-bold mb-0">
+                            {thatRegisteredPlayer.name}
+                          </h6>
+                          <small className="text-muted">
+                            HC: {thatRegisteredPlayer.handicap} | Tee:{" "}
+                            {thatRegisteredPlayer.tee}
+                          </small>
+                        </div>
+                        {alreadyPicked && (
+                          <span
+                            className="badge bg-success"
+                            style={{ fontSize: "0.8rem" }}
+                          >
+                            ✓ Selected
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </Modal.Body>
+            </Modal>
           </div>
         )}
       </Container>
