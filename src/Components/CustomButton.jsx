@@ -1,7 +1,11 @@
-import React from "react";
+import { Wrapper } from "../Styles/CustomButton";
 
-const CustomButton = () => {
-  return <div>CustomButton</div>;
+const CustomButton = ({ children }) => {
+  return (
+    <Wrapper>
+      <span className="custom-btn btn custom-link">{children}</span>
+    </Wrapper>
+  );
 };
 
 export default CustomButton;

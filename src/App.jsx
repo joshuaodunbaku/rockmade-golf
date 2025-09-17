@@ -7,14 +7,9 @@ import HomePageTwo from "./test3.jsx";
 import GolfCourseRegistration from "./Routes/GolfCourseRegistration.jsx";
 import About from "./Routes/About.jsx";
 import Memberships from "./Routes/Memberships.jsx";
-
-// import About from "./Routes/About.jsx";
-// import Footer from "./Components/Footer.jsx";
-// import NotFound from "./Routes/NotFound.jsx";
-// import Services from "./Routes/Services.jsx";
-// import Test from "./Routes/Test.jsx";
-// import Contact from "./Routes/Contact.jsx";
-// import Events from "./Routes/Events.jsx";
+import GameMode from "./Routes/GameMode.jsx";
+import GameSetupWizard from "./test.jsx";
+import Footer from "./Components/Footer.jsx";
 
 function App() {
   return (
@@ -23,21 +18,20 @@ function App() {
       <Routes>
         <Route index path="/" element={<Home />} />
         <Route index path="about" element={<About />} />
-        <Route index path="Memberships" element={<Memberships />} />
-        <Route path="homepage" element={<HomePage />} />
-        <Route path="secondHomepage" element={<HomePageTwo />} />
+        <Route index path="memberships" element={<Memberships />} />
+        <Route index path="gameMode" element={<GameMode />} />
+
         <Route
           path="golfCourseRegistration"
           element={<GolfCourseRegistration />}
         />
 
-        {/* 
-        <Route path="services" element={<Services />} />
-        <Route path="contacts" element={<Contact />} />
-        <Route path="events" element={<Events />} />
-        <Route path="test" element={<Test />} />
-        <Route path="*" element={<NotFound />} /> */}
+        {/* test pages */}
+        <Route path="gamemodetest" element={<GameSetupWizard />} />
+        <Route path="homepage" element={<HomePage />} />
+        <Route path="secondHomepage" element={<HomePageTwo />} />
       </Routes>
+      <Footer />
       {/* <Footer /> */}
     </>
   );

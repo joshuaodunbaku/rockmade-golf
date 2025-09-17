@@ -53,7 +53,9 @@ function OffcanvasExample() {
               <Nav.Link onClick={() => navigate("memberships")}>
                 Memberships
               </Nav.Link>
-              <Nav.Link href="#modes">Game Modes</Nav.Link>
+              <Nav.Link onClick={() => navigate("gameMode")}>
+                Game Modes
+              </Nav.Link>
               <Nav.Link href="#contact">Contact</Nav.Link>
               <Nav.Link onClick={() => navigate("golfCourseRegistration")}>
                 Course Registration

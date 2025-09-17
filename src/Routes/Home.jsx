@@ -1,5 +1,3 @@
-import React from "react";
-import MyCarousel from "../Components/MyCarousel";
 import AnimatedCard from "../Components/AnimatedCard";
 import IMAGES from "../assets/images";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
@@ -13,21 +11,21 @@ const Home = () => {
   return (
     <Wrapper>
       {/* SECTION 1 */}
-      <section class="hero" id="section_1">
-        <div class="container-fluid h-100">
-          <div class="row h-100">
+      <section className="hero" id="section_1">
+        <div className="container-fluid h-100">
+          <div className="row h-100">
             <div
               id="carouselExampleCaptions"
-              class="carousel carousel-fade hero-carousel slide"
+              className="carousel carousel-fade hero-carousel slide"
               data-bs-ride="carousel"
             >
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <div class="container position-relative h-100">
-                    <div class="carousel-caption d-flex flex-column justify-content-center">
-                      <span class="small-title fs-5">
+              <div className="carousel-inner">
+                <div className="carousel-item active">
+                  <div className="container position-relative h-100">
+                    <div className="carousel-caption d-flex flex-column justify-content-center">
+                      <span className="small-title fs-5">
                         Golf Reimagined with{" "}
-                        <strong class="text-warning">RockMadeGolf</strong>
+                        <strong className="text-warning">RockMadeGolf</strong>
                       </span>
 
                       <h1>Play. Compete. Connect.</h1>
@@ -37,123 +35,134 @@ const Home = () => {
                         tournaments, and challenges. Explore
                       </p>
 
-                      <div class="d-flex align-items-center mt-4">
-                        <a class="custom-btn btn custom-link" href="#section_2">
+                      <div className="d-flex align-items-center mt-4">
+                        <a
+                          className="custom-btn btn custom-link"
+                          href="#section_2"
+                        >
                           Join a Tournament
                         </a>
                       </div>
                     </div>
                   </div>
 
-                  <div class="carousel-image-wrap">
+                  <div className="carousel-image-wrap">
                     <img
                       src={IMAGES.image4}
-                      class="img-fluid carousel-image"
+                      className="img-fluid carousel-image"
                       alt=""
                     />
                   </div>
                 </div>
 
-                <div class="carousel-item">
-                  <div class="container position-relative h-100">
-                    <div class="carousel-caption d-flex flex-column justify-content-center">
-                      <span class="small-title fs-5">
-                        Challenge <strong class="text-warning">Yourself</strong>
+                <div className="carousel-item">
+                  <div className="container position-relative h-100">
+                    <div className="carousel-caption d-flex flex-column justify-content-center">
+                      <span className="small-title fs-5">
+                        Challenge{" "}
+                        <strong className="text-warning">Yourself</strong>
                       </span>
 
                       <h1>
                         Compete in tournaments or versus matches to test{" "}
-                        <span class="text-warning">your skills.</span>
+                        <span className="text-warning">your skills.</span>
                       </h1>
 
-                      <div class="d-flex align-items-center mt-4">
-                        <a class="custom-btn btn custom-link" href="#section_2">
+                      <div className="d-flex align-items-center mt-4">
+                        <a
+                          className="custom-btn btn custom-link"
+                          href="#section_2"
+                        >
                           Explore Capabilities
                         </a>
 
                         {/* <a
-                          class="popup-youtube custom-icon d-flex ms-4"
+                          className="popup-youtube custom-icon d-flex ms-4"
                           href="https://www.youtube.com/watch?v=VStvZjykQ00"
                         >
-                          <i class="bi-play play-icon d-flex m-auto text-white"></i>
+                          <i className="bi-play play-icon d-flex m-auto text-white"></i>
                         </a> */}
                       </div>
                     </div>
                   </div>
 
-                  <div class="carousel-image-wrap">
+                  <div className="carousel-image-wrap">
                     <img
                       src={IMAGES.image3}
-                      class="img-fluid carousel-image"
+                      className="img-fluid carousel-image"
                       alt=""
                     />
                   </div>
                 </div>
 
-                <div class="carousel-item">
-                  <div class="container position-relative h-100">
-                    <div class="carousel-caption d-flex flex-column justify-content-center">
-                      <span class="small-title fw-bold fs-5">
+                <div className="carousel-item">
+                  <div className="container position-relative h-100">
+                    <div className="carousel-caption d-flex flex-column justify-content-center">
+                      <span className="small-title fw-bold fs-5">
                         Track Your{" "}
-                        <strong class="text-warning">Progress</strong>
+                        <strong className="text-warning">Progress</strong>
                       </span>
 
                       <h1 className="fw-bold">
-                        Join the <span class="text-warning">Leaderboard</span>
+                        Join the{" "}
+                        <span className="text-warning">Leaderboard</span>
                       </h1>
                       <p className="fs-5 d-none d-sm-block">
                         Follow your handicap and climb the leaderboard while
                         enjoying the game you love.{" "}
                       </p>
 
-                      <div class="d-flex align-items-center mt-4">
-                        <a class="custom-btn btn custom-link" href="#section_2">
+                      <div className="d-flex align-items-center mt-4">
+                        <a
+                          className="custom-btn btn custom-link"
+                          href="#section_2"
+                        >
                           Explore Capabilities
                         </a>
 
                         <a
-                          class="popup-youtube custom-icon d-flex ms-4"
+                          className="popup-youtube custom-icon d-flex ms-4"
                           href="https://www.youtube.com/watch?v=VStvZjykQ00"
                         >
-                          <i class="bi-play play-icon d-flex m-auto text-white"></i>
+                          <i className="bi-play play-icon d-flex m-auto text-white"></i>
                         </a>
                       </div>
                     </div>
                   </div>
 
-                  <div class="carousel-image-wrap">
+                  <div className="carousel-image-wrap">
                     <img
                       src={IMAGES.image1}
-                      class="img-fluid carousel-image"
+                      className="img-fluid carousel-image"
                       alt=""
                     />
                   </div>
                 </div>
 
                 <button
-                  class="carousel-control-prev"
+                  className="carousel-control-prev"
                   type="button"
                   data-bs-target="#carouselExampleCaptions"
                   data-bs-slide="prev"
                 >
                   <span
-                    class="carousel-control-prev-icon"
+                    className="carousel-control-prev-icon"
                     aria-hidden="true"
                   ></span>
-                  <span class="visually-hidden">Previous</span>
+                  <span className="visually-hidden">Previous</span>
                 </button>
 
                 <button
-                  class="carousel-control-next"
+                  className="carousel-control-next"
                   type="button"
                   data-bs-target="#carouselExampleCaptions"
                   data-bs-slide="next"
                 >
                   <span
-                    class="carousel-control-next-icon"
+                    className="carousel-control-next-icon"
                     aria-hidden="true"
                   ></span>
-                  <span class="visually-hidden">Next</span>
+                  <span className="visually-hidden">Next</span>
                 </button>
               </div>
             </div>
@@ -192,8 +201,13 @@ const Home = () => {
                   friendly round at registered golf courses near you.
                 </p>
                 <div>
-                  {" "}
-                  <Button variant="success">Play Now</Button>
+                  <Link
+                    variant="outline-light"
+                    className="btn btn-outline-light rounded-0 px-5 py-2"
+                    to={"gameMode"}
+                  >
+                    Play Now
+                  </Link>
                 </div>
               </div>
             </GameModeCard>
@@ -206,8 +220,13 @@ const Home = () => {
                   Compete in structured competitions and climb the leaderboard.
                 </p>
                 <div>
-                  {" "}
-                  <Button variant="success">Play Now</Button>
+                  <Link
+                    variant="outline-light"
+                    className="btn btn-outline-light rounded-0 px-5 py-2"
+                    to={"gameMode"}
+                  >
+                    Play Now
+                  </Link>
                 </div>
               </div>
             </GameModeCard>
@@ -221,8 +240,13 @@ const Home = () => {
                   friendly round at registered golf courses near you.
                 </p>
                 <div>
-                  {" "}
-                  <Button variant="success">Play Now</Button>
+                  <Link
+                    variant="outline-light"
+                    className="btn btn-outline-light rounded-0 px-5 py-2"
+                    to={"gameMode"}
+                  >
+                    Play Now
+                  </Link>
                 </div>
               </div>
             </GameModeCard>
