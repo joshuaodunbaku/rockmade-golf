@@ -7,10 +7,10 @@ const Footer = () => {
       >
         <div className="container text-white">
           <div className="row">
-            <div className="col-6">
+            <div className="col-12 col-md-6 gap-5">
               <h3
                 className="fw-bold"
-                style={{ color: "var(--secondary-color)" }}
+                style={{ color: "var(--tertiary-color)" }}
               >
                 Links
               </h3>
@@ -23,20 +23,20 @@ const Footer = () => {
                 <span></span>
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-12 col-md-3 gap-5">
               <h3
                 className="fw-bold"
-                style={{ color: "var(--secondary-color)" }}
+                style={{ color: "var(--tertiary-color)" }}
               >
                 Hava a question?
               </h3>
               <div>090-080-0760</div>
               <div>hello@company.com</div>
             </div>
-            <div className="col-3">
+            <div className="col-12 col-md-3 gap-5">
               <h3
                 className="fw-bold"
-                style={{ color: "var(--secondary-color)" }}
+                style={{ color: "var(--tertiary-color)" }}
               >
                 Location
               </h3>
