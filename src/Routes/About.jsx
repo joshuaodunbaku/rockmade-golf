@@ -16,10 +16,6 @@ const About = () => {
           <h3 className="display-4 fw-bold">
             About <span className="text-success">Us</span>
           </h3>
-          {/* <p className="lead fw-bold">
-            Connecting golfers, building competition, and making every swing
-            count.
-          </p> */}
         </div>
       </HeroComp>
 

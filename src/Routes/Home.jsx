@@ -75,13 +75,6 @@ const Home = () => {
                         >
                           Explore Capabilities
                         </a>
-
-                        {/* <a
-                          className="popup-youtube custom-icon d-flex ms-4"
-                          href="https://www.youtube.com/watch?v=VStvZjykQ00"
-                        >
-                          <i className="bi-play play-icon d-flex m-auto text-white"></i>
-                        </a> */}
                       </div>
                     </div>
                   </div>

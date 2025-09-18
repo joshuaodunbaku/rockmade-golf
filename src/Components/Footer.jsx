@@ -7,7 +7,7 @@ const Footer = () => {
       >
         <div className="container text-white">
           <div className="row">
-            <div className="col-12 col-md-6 gap-5">
+            <div className="col-12 col-md-6">
               <h3
                 className="fw-bold"
                 style={{ color: "var(--tertiary-color)" }}
@@ -23,7 +23,7 @@ const Footer = () => {
                 <span></span>
               </div>
             </div>
-            <div className="col-12 col-md-3 gap-5">
+            <div className="col-12 col-md-3">
               <h3
                 className="fw-bold"
                 style={{ color: "var(--tertiary-color)" }}
@@ -33,7 +33,7 @@ const Footer = () => {
               <div>090-080-0760</div>
               <div>hello@company.com</div>
             </div>
-            <div className="col-12 col-md-3 gap-5">
+            <div className="col-12 col-md-3">
               <h3
                 className="fw-bold"
                 style={{ color: "var(--tertiary-color)" }}
