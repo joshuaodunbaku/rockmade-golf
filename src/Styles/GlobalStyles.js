@@ -162,6 +162,23 @@ const GlobalStyle = createGlobalStyle`
   max-height: 80%;
 }
 
+ /*---------------------------------------
+  CUSTOM BUTTON               
+-----------------------------------------*/
+  .custom-btn {
+    background: var(--secondary-color);
+    border-radius: 100px;
+    color: var(--white-color);
+    font-size: var(--copyright-text-font-size);
+    font-weight: var(--font-weight-bold);
+    padding: 12px 24px;
+  }
+
+  .custom-btn:hover {
+    background: var(--primary-color);
+    color: var(--white-color);
+  }
+
 
   ///////////////////////////////////////////* Font family classes *///////////////////////////////////////////
   .space-grotesk {

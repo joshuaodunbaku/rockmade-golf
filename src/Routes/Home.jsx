@@ -284,18 +284,18 @@ const Home = () => {
                 entry: "$50",
               },
             },
-          ].map(({ title, image, link, details }) => (
-            <Col md={4} className="p-3">
+          ].map(({ title, image, link, details }, index) => (
+            <Col key={index} md={4} className="p-3">
               <Card className="shadow">
                 <Card.Img src={image} />
                 <Card.Body>
                   <Card.Title>{title}</Card.Title>
                   <Card.Text>
-                    {Object.keys(details).map((value, content) => (
-                      <>
+                    {Object.keys(details).map((value, index) => (
+                      <span key={index}>
                         <strong>{capitalizeFirstLetter(value)}: </strong>
                         {details[value]} <br />
-                      </>
+                      </span>
                     ))}
                   </Card.Text>
                   <Button

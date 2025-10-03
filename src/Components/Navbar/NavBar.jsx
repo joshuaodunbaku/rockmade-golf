@@ -1,7 +1,7 @@
 import IMAGES from "../../assets/images";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../../Styles/navbarStyle.css"; // custom styles
-import { Navbar, Nav, Button, Container } from "react-bootstrap";
+import { Navbar, Nav, Container } from "react-bootstrap";
 
 function OffcanvasExample() {
   const navigate = useNavigate();
@@ -10,60 +10,86 @@ function OffcanvasExample() {
     <>
       <Navbar expand="lg" bg="" variant="light" className="p-3 shadow">
         <Container>
-          {/* Brand */}
           <Navbar.Brand onClick={() => navigate("/")}>
-            <img src={IMAGES.logo} width={"200px"} height={"70px"} alt="" />
+            <img src={IMAGES.logo} width={"130px"} height={"50px"} alt="logo" />
           </Navbar.Brand>
-          {/* <div> */}
-          {/* Buttons always visible (beside toggler) */}
-          {/* <div className="d-flex flex-column order-lg-2">
-            <div>
-              <div className="d-flex align-items-center justify-content-end order-lg-2 ms-auto">
-                <div className="btn-div rounded-pill">
-                  <button className="btn btn-outline-dark p-2 px-4 rounded-pill me-2">
-                    Login
-                  </button>
-                </div>
 
-                <div className="btn-div rounded-pill">
-                  <button className="btn btn-slideToRight btn-signup p-2 px-4 me-2 rounded-pill">
-                    Signup
-                  </button>
-                </div>
-
-                <div className="btn-div rounded-pill">
-                  <button className="donate-btn p-2 px-4 rounded-pill">
-                    Donate
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div></div>
-          </div> */}
-          <div>
-            <Navbar.Toggle className="" aria-controls="main-navbar" />
+          {/* Toggle + mobile donate */}
+          <div className="d-flex ms-auto align-items-center">
+            {/* Mobile donate */}
+            <a
+              className="custom-btn btn d-lg-none me-2 text-white"
+              href="#section_2"
+            >
+              Donate
+            </a>
+            <Navbar.Toggle aria-controls="main-navbar">
+              <span className="navbar-toggler-icon"></span>{" "}
+            </Navbar.Toggle>{" "}
           </div>
 
-          {/* Collapsible Nav Links */}
-          <Navbar.Collapse id="main-navbar" className="order-lg-1">
-            <Nav className="mx-auto">
-              <Nav.Link onClick={() => navigate("/")}>Home</Nav.Link>
-              <Nav.Link onClick={() => navigate("about")}>About</Nav.Link>
-              <Nav.Link onClick={() => navigate("memberships")}>
-                Memberships
+          <Navbar.Collapse id="main-navbar">
+            <Nav className="ms-auto me-lg-5 align-items-lg-center">
+              <Nav.Link
+                as={NavLink}
+                to="/"
+                end
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                Home
               </Nav.Link>
-              <Nav.Link onClick={() => navigate("gameMode")}>
-                Game Modes
+
+              <Nav.Link
+                as={NavLink}
+                to="/about"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                About
               </Nav.Link>
-              <Nav.Link href="#contact">Contact</Nav.Link>
-              <Nav.Link onClick={() => navigate("golfCourseRegistration")}>
+
+              <Nav.Link
+                as={NavLink}
+                to="/gameMode"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                Game Mode
+              </Nav.Link>
+
+              <Nav.Link
+                as={NavLink}
+                to="/golfCourseRegistration"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
                 Course Registration
               </Nav.Link>
+
+              <Nav.Link
+                as={NavLink}
+                to="/membership"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                Membership
+              </Nav.Link>
             </Nav>
+
+            {/* Desktop donate button */}
+            <a
+              href="ticket.html"
+              className="btn custom-btn d-none d-lg-block text-white"
+            >
+              Donate
+            </a>
           </Navbar.Collapse>
-          {/* </div>{" "} */}
-          {/* Navbar toggle */}
         </Container>
       </Navbar>
     </>
