@@ -294,7 +294,7 @@ const Contests = () => {
         try {
             setNetworkRequest(true);
             resetAbortController();
-            await update(controllerRef.current.signal, {id: editedContest.id, name: editedContest.name, location: editedContest.location});
+            await update(controllerRef.current.signal, {id: editedContest.id, name: editedContest.name});
             setEditedContest(null);
             setNetworkRequest(false);
         } catch (error) {
@@ -466,7 +466,7 @@ const Contests = () => {
             <Table loading={networkRequest} rowKey="id" data={contests} affixHeader affixHorizontalScrollbar 
                 renderLoading={() => <RsuiteTableSkeletonLoader withPlaceholder={true} rows={10} cols={5} />} 
                 autoHeight={true} hover={true}>
-                    
+                
                 {columns.map((column, idx) => {
                     const { key, label, ...rest } = column;
                     if(idx < 1){

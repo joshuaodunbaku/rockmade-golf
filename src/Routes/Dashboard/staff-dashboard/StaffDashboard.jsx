@@ -20,8 +20,7 @@ const StaffDashboard = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
-    const { register } = useStaffController();
-    const { dashboard } = useStaffController();
+    const { dashboard, register } = useStaffController();
     const { authUser } = useAuthUser();
     const user = authUser();
 

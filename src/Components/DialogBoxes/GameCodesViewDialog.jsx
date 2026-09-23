@@ -8,11 +8,11 @@ const GameCodesViewDialog = ({ show, handleClose, codes }) => {
             </Modal.Header>
             <Modal.Body>
                 <div className="d-flex flex-column">
-                    <div className="d-flex flex-column gap-1">
+                    {/* <div className="d-flex flex-column gap-1">
                         <label className="form-label fw-bold fs-4">Join Game</label>
                         <Form.Label className="fs-1">{ codes?.join_code }</Form.Label>
                     </div>
-                    <hr />
+                    <hr /> */}
                     <div className="d-flex flex-column">
                         <label className="form-label fw-bold fs-4">View Game</label>
                         <Form.Label className="fs-1">{ codes?.view_code }</Form.Label>

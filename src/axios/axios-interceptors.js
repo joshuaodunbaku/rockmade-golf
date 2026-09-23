@@ -60,6 +60,15 @@ export const useAxiosInterceptor = () => {
                 return Promise.reject(error);
             }
         }
+        const expectedError = error.response && error.response.status >= 400 && error.response.status < 600;
+
+        if (!expectedError) {
+            error.response = {
+                data: {
+                    message: error.message ? error.message : "An unexpected Error occured",
+                },
+            };
+        }
         return Promise.reject(error);
     }
 
