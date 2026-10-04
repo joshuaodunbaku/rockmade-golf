@@ -226,46 +226,46 @@ const Home = () => {
                                     </div>
                                 </div>
 
-                              <div className="carousel-item">
-                                  <div className="container position-relative h-100">
-                                      <div className="carousel-caption d-flex flex-column justify-content-center">
-                                          <span className="small-title fw-bold fs-5">
-                                              Challenge <span className="word-span">Yourself</span>
-                                          </span>
-                                          <h1 className="display-5 fw-bold">
-                                              Compete in tournaments or versus matches to test{" "}
-                                              <span className="word-span">your skills.</span>
-                                          </h1>
-                                          <div className="d-flex align-items-center mt-4">
-                                              <a className="custom-btn btn" href="#section_2">
-                                                Explore Capabilities <BiArrowToRight />
-                                              </a>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <div className="carousel-image-wrap">
-                                      <img src={IMAGES.image3} className="img-fluid carousel-image" alt="Competition" />
-                                  </div>
-                              </div>
+                                <div className="carousel-item">
+                                    <div className="container position-relative h-100">
+                                        <div className="carousel-caption d-flex flex-column justify-content-center">
+                                            <span className="small-title fw-bold fs-5">
+                                                Challenge <span className="word-span">Yourself</span>
+                                            </span>
+                                            <h1 className="display-5 fw-bold">
+                                                Compete in tournaments or versus matches to test{" "}
+                                                <span className="word-span">your skills.</span>
+                                            </h1>
+                                            <div className="d-flex align-items-center mt-4">
+                                                <a className="custom-btn btn" href="#section_2">
+                                                    Explore Capabilities <BiArrowToRight />
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="carousel-image-wrap">
+                                        <img src={IMAGES.image3} className="img-fluid carousel-image" alt="Competition" />
+                                    </div>
+                                </div>
 
-                              <div className="carousel-item">
-                                  <div className="container position-relative h-100">
-                                      <div className="carousel-caption d-flex flex-column justify-content-center">
-                                          <span className="small-title fw-bold fs-5">
-                                              Track Your <span className="word-span">Progress</span>
-                                          </span>
-                                          <h1 className="display-5 fw-bold">
-                                              Join the <span className="word-span">Leaderboard</span>
-                                          </h1>
-                                          <p className="fs-5 col-md-8 d-none d-sm-block">
-                                              Follow your handicap and climb the leaderboard while
-                                              enjoying the game you love.
-                                          </p>
-                                          <div className="d-flex align-items-center mt-4">
-                                              <a className="custom-btn btn" href="#section_2">
-                                                Explore Capabilities <BiArrowToRight />
-                                              </a>
-                                          </div>
+                                <div className="carousel-item">
+                                    <div className="container position-relative h-100">
+                                        <div className="carousel-caption d-flex flex-column justify-content-center">
+                                            <span className="small-title fw-bold fs-5">
+                                                Track Your <span className="word-span">Progress</span>
+                                            </span>
+                                            <h1 className="display-5 fw-bold">
+                                                Join the <span className="word-span">Leaderboard</span>
+                                            </h1>
+                                            <p className="fs-5 col-md-8 d-none d-sm-block">
+                                                Follow your handicap and climb the leaderboard while
+                                                enjoying the game you love.
+                                            </p>
+                                            <div className="d-flex align-items-center mt-4">
+                                                <a className="custom-btn btn" href="#section_2">
+                                                    Explore Capabilities <BiArrowToRight />
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="carousel-image-wrap">
