@@ -1,0 +1,689 @@
+import { useEffect, useRef, useState } from 'react'
+import { Button, Col, Row } from 'react-bootstrap';
+import { IoSettings } from "react-icons/io5";
+import { GrView } from "react-icons/gr";
+import { VscRemove } from 'react-icons/vsc';
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { isAfter, format } from 'date-fns';
+import { Table, IconButton } from 'rsuite';
+const { Column, HeaderCell } = Table;
+
+import { useAuthUser } from '../../../app-context/user-context';
+import IMAGES from '../../../assets/images';
+import handleErrMsg from '../../../Utils/error-handler';
+import cryptoHelper from '../../../Utils/crypto-helper';
+import { useAuth } from '../../../app-context/auth-context';
+import useUserController from '../../../api-controllers/user-controller-hook';
+import { OrbitalLoading } from '../../../Components/react-loading-indicators/Indicator';
+import ConfirmDialog from '../../../Components/DialogBoxes/ConfirmDialog';
+import useGameController from '../../../api-controllers/game-controller-hook';
+import ImageComponent from '../../../Components/ImageComponent';
+import { useActiveCourses } from '../../../app-context/active-courses-context';
+import InputDialog from '../../../Components/DialogBoxes/InputDialog';
+import AsyncSearchDialog from '../../../Components/DialogBoxes/AsyncSearchDialog';
+import useCourseController from '../../../api-controllers/course-controller-hook';
+import { useGame } from '../../../app-context/game-context';
+import Skeleton from 'react-loading-skeleton';
+import useSessionStorage from '../../../app-context/useSessionStorage';
+import { zeroOrGtParamSchema } from '../../../Utils/yup-schema-validator/input-validator';
+
+const gamesColumns = [
+    {
+        key: 'name',
+        label: 'Name',
+        fixed: true,
+        width: 200
+    },
+    {
+        key: 'course_name',
+        label: 'Course',
+        // flexGrow: 2,
+        width: 200
+    },
+    {
+        key: 'hole_mode',
+        label: 'Hole Mode',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'date',
+        label: 'Game Date',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'status',
+        label: 'Game Status',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'createdAt',
+        label: 'Created At',
+        flexGrow: 1,
+        // width: 100
+    },
+];
+
+const recentGamesColumns = [
+    {
+        key: 'name',
+        label: 'Name',
+        fixed: true,
+        // flexGrow: 2,
+        width: 200
+    },
+    {
+        key: 'mode',
+        label: 'Game',
+        flexGrow: 1,
+        // width: 200
+    },
+    {
+        key: 'hole_mode',
+        label: 'Hole Mode',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'date',
+        label: 'Game Date',
+        flexGrow: 1,
+        // width: 100
+    },
+    {
+        key: 'players',
+        label: 'Players',
+        flexGrow: 1,
+        // width: 100
+    },
+];
+
+const ActionCell = ({ rowData, dataKey, onDelete, onViewGame, showDelete, ...props }) => {
+    return (
+        <Table.Cell {...props} style={{ padding: '6px', display: 'flex', gap: '4px', width: '400px' }}>
+            <IconButton icon={<GrView color='blue' />} onClick={() => { onViewGame(rowData); }}  />
+            {showDelete && <IconButton appearance="subtle" icon={<VscRemove />} onClick={() => { onDelete(rowData); }}  />}
+        </Table.Cell>
+  );
+};
+
+const buildTableData = (data) => {
+    return data.map(r => {
+        let hole_mode = 'Full 18';
+        let mode = 'Member Games';
+        if(r.hole_mode === 2){
+            hole_mode = 'Font 9'
+        }else if(r.hole_mode === 3) {
+            hole_mode = 'Back 9'
+        }
+        if(r.mode === 1){
+            mode = 'Tournament'
+        }
+        return {
+            id: r.id,
+            game_id: r.game_id,
+            name: r.name,
+            date: format(r.date, "dd/MM/yyyy"),
+            hole_mode,
+            mode,
+            players: r.players
+        }
+    });
+};
+
+const ClientDashboard = () => {
+    const controllerRef = useRef(new AbortController());
+    
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    const { logout, updateHCP } = useAuth();
+    const { setUserHomeClub } =  useActiveCourses();
+    const { removegame, verifyViewCode } = useGameController();
+    const { gameCourseSearch  } = useCourseController();
+    const { dashboard, updateHomeClub } = useUserController();
+    const { setPlayerID } = useGame();
+    const { authUser } = useAuthUser();
+    const user = authUser();
+
+    const [networkRequest, setNetworkRequest] = useState(false);
+    const [topPlayedCoursesData, setTopPlayedCoursesData] = useState([ { name: "Fetching Data", value: 1, color: "#0088FE" } ]);
+    const [mostPlayedContestsData, setMostPlayedContestsData] = useState([]);
+
+    const [roundToDel, setRoundToDel] = useState(null);
+    const [coursesPlayed, setCoursesPlayed] = useState(0);
+    const [homeClubPlayers, setHomeClubPlayers] = useState(0);
+    const [gamesPlayed, setGamesPlayed] = useState(0);
+    const [homeClub, setHomeClub] = useState("");
+    const [ongoigRounds, setOngongRounds] = useState([]);
+    const [recentGames, setRecentGames] = useState([]);
+
+	const [showConfirmModal, setShowConfirmModal] = useState(false);
+	const [displayMsg, setDisplayMsg] = useState("");
+    const [confirmDialogEvtName, setConfirmDialogEvtName] = useState(null);
+    const [showAsyncSearchModal, setShowAsyncSearcModal] = useState(false);
+    //	for input dialog
+    const [showInputModal, setShowInputModal] = useState(false);
+    const [inputValType, setInputValType] = useState("");
+    
+    const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8a2be2"];
+    const months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const RADIAN = Math.PI / 180;
+    const renderCustomizedLabel = ({
+        cx,
+        cy,
+        midAngle,
+        innerRadius,
+        outerRadius,
+        percent,
+        index
+    }) => {
+        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+        
+        return (
+            <text
+                x={x}
+                y={y}
+                fill="white"
+                textAnchor={x > cx ? "start" : "end"}
+                dominantBaseline="central"
+            >
+                {`${(percent * 100).toFixed(0)}%`}
+            </text>
+        );
+    };
+
+    useEffect(() => {
+        if(!user || cryptoHelper.decryptData(user.mode) !== '1'){
+            logoutUnauthorized();
+            return;
+        }
+        setMostPlayedContestsData([{month: months[0], amount: 1000}]);
+
+        initialize();
+        return () => {
+            // This cleanup function runs when the component unmounts or when the dependencies of useEffect change (e.g., route change)
+            controllerRef.current.abort();
+        };
+    }, [location.pathname]);
+
+    const logoutUnauthorized = async () => {
+        setNetworkRequest(true);
+        await logout();
+        navigate("/");
+    };
+
+    const initialize = async () => {
+        try {
+            controllerRef.current = new AbortController();
+            setNetworkRequest(true);
+            const response = await dashboard(controllerRef.current.signal);
+            if(response && response.data){
+                setCoursesPlayed(response.data.courses_played);
+                setGamesPlayed(response.data.games_played);
+                setHomeClub(response.data.home_club);
+                setUserHomeClub(response.data.home_club);
+                setHomeClubPlayers(response.data.hc_players - 1);
+                const rounds = response.data.ongoing_rounds.map(r => {
+                    let mode = 'Full 18';
+                    if(r.hole_mode === 2){
+                        mode = 'Font 9'
+                    }else if(r.hole_mode === 3) {
+                        mode = 'Back 9'
+                    }
+                    return {
+                        id: r.game_id,
+                        name: r.name,
+                        course_name: r.course_name,
+                        date: format(r.date, "dd/MM/yyyy"),
+                        status: r.status === 1 ? "Yet to play" : "In play",
+                        hole_mode: mode,
+                        createdAt: format(r.createdAt, "dd/MM/yyyy")
+                    }
+                });
+                setOngongRounds(rounds);
+                const recent = buildTableData(response.data.recent_games);
+                setRecentGames(recent);
+            }
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+    const viewHomeClubPlayers = () => navigate('client/players/list');
+
+    const handlegameDelete = (data) => {
+        setRoundToDel(data);
+        setConfirmDialogEvtName('removeOngoing');
+        setDisplayMsg(`Delete ongoing round ${data.name}?. Action cannot be undone!`);
+        setShowConfirmModal(true);
+    };
+
+    const handleViewgame = (data) => {
+        const nameArr = data.name.trim().split(' ');
+        const strName = nameArr.join('+');
+        navigate(`/dashboard/client/${data.id}/game/${strName}`);
+    };
+
+    const handleViewGameHistory = (rowData) => {
+        const decrypted_id = cryptoHelper.decryptData(user.id);
+        useSessionStorage.setValue('recent_game_id', rowData.game_id.toString());
+        setPlayerID(decrypted_id);
+        const nameArr = rowData.name.split(' ');
+        const strName = nameArr.join('+');
+        navigate(`/dashboard/client/games/history/summary/${strName}`);
+    };
+
+    const createGame = () => {
+        if(user && user.sub && isAfter(new Date(), new Date(cryptoHelper.decryptData(user.sub)).setHours(23, 59, 59, 0))){
+            // navigate to sub page
+            navigate('/memberships');
+            return;
+        }
+        navigate('game/create');
+    };
+
+    const navigateGameHistory = () => {
+        navigate(`client/${user.nano_id}/games/history`);
+    };
+
+	const handleCloseModal = () => {
+        setShowConfirmModal(false);
+        setShowInputModal(false);
+        setShowAsyncSearcModal(false);
+    };
+  
+    const handleConfirm = async () => {
+        setShowConfirmModal(false);
+        switch (confirmDialogEvtName) {
+            case "removeOngoing":
+                delgame();
+                break;
+        }
+    };
+
+    const inputConfirm = (val) => {
+        switch (inputValType) {
+            case 'hcp':
+                try {
+                    zeroOrGtParamSchema.validateSync(val);
+                    hcpUpdate(val);
+                } catch (error) {
+                    toast.error(error.message);
+                    return;
+                }
+                break;
+            case 'viewCode':
+                viewCodeVerification(val);
+                break;
+        }
+    }
+
+	const delgame = async () => {
+        try {
+            resetAbortController();
+            setNetworkRequest(true);
+            await removegame(controllerRef.current.signal, roundToDel.id);
+            // remove game from table data
+            const temp = [...ongoigRounds];
+            const idx = temp.findIndex(o => o.id === roundToDel.id);
+            temp.splice(idx, 1);
+            setOngongRounds(temp);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+	const hcpUpdate = async (val) => {
+		try {
+			setNetworkRequest(true);
+			resetAbortController();
+	        await updateHCP(controllerRef.current.signal, { hcp: val });
+            setShowInputModal(false);
+            toast.info('HCP updated successfully');
+			setNetworkRequest(false);
+		} catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+		}
+	}
+
+	const viewCodeVerification = async (val) => {
+		try {
+			setNetworkRequest(true);
+			resetAbortController();
+	        const response = await verifyViewCode(controllerRef.current.signal, val);
+            if(response && response.data){
+                const nameArr = response.data.Game.name.trim().split(' ');
+                const strName = nameArr.join('+');
+                navigate(`/dashboard/client/${response.data.Game.nano_id}/game/view/${strName}`);
+            }
+            setShowInputModal(false);
+			setNetworkRequest(false);
+		} catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+		}
+	}
+
+    const saveHomeClub = async (homeClub) => {
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            await updateHomeClub(controllerRef.current.signal, {id: homeClub.id});
+            setHomeClub(homeClub);
+            setUserHomeClub(homeClub);
+            toast.info('Home Club updated successfully');
+            setShowAsyncSearcModal(false);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+    
+    const hcSearch = async (inputValue) => {
+        resetAbortController();
+        const response = await gameCourseSearch(controllerRef.current.signal, inputValue);
+        return response.data.map(entity => ({label: entity.name, value: entity}));
+    }
+
+    const resetAbortController = () => {
+        // Cancel previous request if it exists
+        if (controllerRef.current) {
+            controllerRef.current.abort();
+        }
+        controllerRef.current = new AbortController();
+    };
+
+    return (
+        <section className='container' style={{minHeight: '60vh'}}>
+            <Row className='mt-4'>
+                <div className="d-flex flex-wrap gap-4 align-items-center col-md-8 col-sm-12" >
+                    {user.blur && <ImageComponent image={user.blur} width={'100px'} height={'100px'} round={true} key_id={user.blur.key_hash} />}
+                    {!user.blur && <img src={IMAGES.member_icon} alt ="Avatar" className="rounded-circle" width={100} height={100} />}
+                    <div className="d-flex flex-wrap gap-2 fw-bold h2">
+                        <span>{user.firstName}</span>
+                        <span> {user.lastName}</span>
+                    </div>
+                </div>
+                <Col xs={12} md={4} sm={12} className="mb-2">
+                    <div className="p-2 h-100">
+                        <div className="card shadow border-0 rounded-3 h-100">
+                            {!networkRequest && <div className="card-body">
+                                <div className='d-flex justify-content-between'>
+                                    <span className='h1 text-success fw-bold' style={{fontSize: '50px'}}>{homeClubPlayers}</span>
+                                </div>
+                                <Button variant='outline-success' style={{width: '100px'}} onClick={viewHomeClubPlayers}>View</Button>
+                            </div>}
+                            {networkRequest && <div className="card-body">
+                                <div className='d-flex flex-column justify-content-between'>
+                                    <Skeleton count={4} style={{width: '100%'}} />
+                                </div>
+                                <Skeleton count={2} style={{width: '100%'}} />
+                            </div>}
+                            <div className="card-footer text-white bg-success">
+                                Home Club Players
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+            </Row>
+            <Row className='mt-4'>
+                <Col xs={12} md={3} sm={12} className="mb-2">
+                    <div className="p-2 h-100">
+                        <div className="card shadow border-0 rounded-3 h-100" style={{minHeight: 170}}>
+                            {!networkRequest && <div className="card-body">
+                                <div className='d-flex flex-column justify-content-between'>
+                                    <span className='align-self-end'>
+                                        <IoSettings size={30} className='text-warning' onClick={() => {
+                                            setDisplayMsg('Enter new HCP');
+                                            setShowInputModal(true);
+                                            setInputValType('hcp');
+                                        }} />
+                                    </span>
+                                    <span className='h1 text-warning fw-bold' style={{fontSize: '50px'}}>{user?.hcp}</span>
+                                </div>
+                                <span>Handicap Index value</span>
+                            </div>}
+                            {networkRequest && <div className="card-body">
+                                <div className='d-flex flex-column justify-content-between'>
+                                    <Skeleton count={4} style={{width: '100%'}} />
+                                </div>
+                                <Skeleton count={2} style={{width: '100%'}} />
+                            </div>}
+                            <div className="card-footer fw-bold bg-warning">
+                                HCP
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+                <Col xs={12} md={3} sm={12} className="mb-2">
+                    <div className="p-2 h-100">
+                        <div className="card shadow border-0 rounded-3 h-100">
+                            {!networkRequest && <div className="card-body">
+                                <div className='d-flex justify-content-between'>
+                                    <span className='h1 text-danger fw-bold' style={{fontSize: '50px'}}>{coursesPlayed}</span>
+                                </div>
+                                <span>Number of courses played</span>
+                            </div>}
+                            {networkRequest && <div className="card-body">
+                                <div className='d-flex flex-column justify-content-between'>
+                                    <Skeleton count={4} style={{width: '100%'}} />
+                                </div>
+                                <Skeleton count={2} style={{width: '100%'}} />
+                            </div>}
+                            <div className="card-footer text-white bg-danger">
+                                Courses Played
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+                <Col xs={12} md={3} sm={12} className="mb-2">
+                    <div className="p-2 h-100">
+                        <div className="card shadow border-0 rounded-3 h-100">
+                            {!networkRequest && <div className="card-body">
+                                <div className='d-flex justify-content-between'>
+                                    <span className='h1 text-primary fw-bold' style={{fontSize: '50px'}}>{gamesPlayed}</span>
+                                </div>
+                                <span>Number of games played</span>
+                            </div>}
+                            {networkRequest && <div className="card-body">
+                                <div className='d-flex flex-column justify-content-between'>
+                                    <Skeleton count={4} style={{width: '100%'}} />
+                                </div>
+                                <Skeleton count={2} style={{width: '100%'}} />
+                            </div>}
+                            <div className="card-footer text-white bg-primary">
+                                Total Games Played
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+                <Col xs={12} md={3} sm={12} className="mb-2">
+                    <div className="p-2 h-100">
+                        <div className="card shadow border-0 rounded-3 h-100">
+                            {!networkRequest && <div className="card-body">
+                                <div className='d-flex flex-column justify-content-between'>
+                                    <span className='align-self-end'>
+                                        <IoSettings size={30} style={{ color: 'green' }} onClick={() => {
+                                            setDisplayMsg('Search new Home Club');
+                                            setShowAsyncSearcModal(true);
+                                        }} />
+                                    </span>
+                                    <span className='text-success fw-bold' style={{fontSize: '25px'}}>{homeClub?.name}</span>
+                                </div>
+                            </div>}
+                            {networkRequest && <div className="card-body">
+                                <div className='d-flex flex-column justify-content-between'>
+                                    <Skeleton count={4} style={{width: '100%'}} />
+                                </div>
+                                <Skeleton count={2} style={{width: '100%'}} />
+                            </div>}
+                            <div className="card-footer text-white bg-success">
+                                Home Club
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+            </Row>
+            <div className="justify-content-center d-flex">
+                {networkRequest && <OrbitalLoading color='red' />}
+            </div>
+            {ongoigRounds.length > 0 && <h2 className='mt-3'>Ongoing Games</h2>}
+            {ongoigRounds.length > 0 && 
+                <Table rowKey="id" data={ongoigRounds} affixHeader affixHorizontalScrollbar autoHeight={true} hover={true} className={` ${networkRequest ? 'disabledDiv' : ''}`}>
+                    {gamesColumns.map((column, idx) => {
+                        const { key, label, ...rest } = column;
+                        return (
+                            <Column {...rest} key={key} fullText>
+                                <HeaderCell className='fw-bold text-primary'>{label}</HeaderCell>
+                                <Table.Cell dataKey={key} style={{ padding: 6 }} />
+                            </Column>
+                        );
+                    })}
+                    <Column width={100} >
+                        <HeaderCell className='fw-bold text-primary'>Actions...</HeaderCell>
+                        <ActionCell onDelete={handlegameDelete} onViewGame={handleViewgame} showDelete={true} />
+                    </Column>
+                </Table>
+            }
+            <div className="row mt-3">
+                <Col xs={12} md={12} sm={12} className="mb-2 col-12 my-2 d-flex flex-column justify-content-center">
+                    <div className="card shadow border-0 rounded-3 h-100 p-4">
+                        <div className="card-body">
+                            <h2 className="fw-bold space-mono-bold">Game Performance Stats</h2>
+                            <div className="d-flex justify-content-center flex-wrap gap-3">
+                                <ResponsiveContainer aspect={1.99} height={400}>
+                                    <BarChart
+                                        width={'100%'}
+                                        data={mostPlayedContestsData}
+                                        margin={{
+                                            top: 5,
+                                            right: 30,
+                                            left: 20,
+                                            bottom: 5,
+                                        }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="month" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Legend width={'100%'} />
+                                        <Bar dataKey="amount" fill="#82ca9d" activeBar={<Rectangle fill="gold" stroke="purple" />} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </div>
+                </Col>
+            </div>
+            <div className="row mt-3">
+                <Col xs={12} md={12} sm={12} className="mb-2 col-12 my-2 d-flex flex-column justify-content-center">
+                    <div className="card shadow border-0 rounded-3 h-100 p-4">
+                        <div className="card-body">
+                            <h2 className="fw-bold">Recent Games</h2>
+                            <Table rowKey="id" data={recentGames} affixHeader affixHorizontalScrollbar autoHeight={true} hover={true} className={` ${networkRequest ? 'disabledDiv' : ''}`}>
+                                {recentGamesColumns.map((column, idx) => {
+                                    const { key, label, ...rest } = column;
+                                    return (
+                                        <Column {...rest} key={key} fullText>
+                                            <HeaderCell className='fw-bold text-primary'>{label}</HeaderCell>
+                                            <Table.Cell dataKey={key} style={{ padding: 6 }} />
+                                        </Column>
+                                    );
+                                })}
+                                <Column width={100} >
+                                    <HeaderCell className='fw-bold text-primary'>Actions...</HeaderCell>
+                                    <ActionCell onViewGame={handleViewGameHistory} />
+                                </Column>
+                            </Table>
+                        </div>
+                    </div>
+                </Col>
+            </div>
+            <div className="row mt-3 mb-5">
+                <div className="col-12 col-sm-3">
+                    <div className="p-2">
+                        <Button variant='warning' className='w-100 fw-bold' onClick={createGame}>Create Game</Button> 
+                    </div>
+                </div>
+                <div className="col-12 col-sm-3"> 
+                    <div className="p-2">
+                        <Button variant='danger' className='w-100 fw-bold' onClick={() => {
+                            setDisplayMsg('Enter View Code');
+                            setShowInputModal(true);
+                            setInputValType('viewCode');
+                        }}>
+                            Join Game
+                        </Button> 
+                    </div>
+                </div>
+                <div className="col-12 col-sm-3"> 
+                    <div className="p-2">
+                        <Button variant='primary' className='w-100 fw-bold' onClick={navigateGameHistory}>Game History</Button> 
+                    </div>
+                </div>
+                <div className="col-12 col-sm-3"> 
+                    <div className="p-2">
+                        <Button variant='success' className='w-100 fw-bold' onClick={() => navigate("profile")}>My Profile</Button> 
+                    </div>
+                </div>
+            </div>
+			<ConfirmDialog
+				show={showConfirmModal}
+				handleClose={handleCloseModal}
+				handleConfirm={handleConfirm}
+				message={displayMsg}
+			/>
+            <InputDialog
+                show={showInputModal}
+                handleClose={handleCloseModal}
+                handleConfirm={inputConfirm}
+                message={displayMsg}
+                networkRequest={networkRequest}
+            />
+            <AsyncSearchDialog
+                show={showAsyncSearchModal}
+                handleClose={handleCloseModal}
+                handleSubmitResult={saveHomeClub}
+                message={displayMsg}
+                searchFn={hcSearch}
+                networkRequest={networkRequest}
+            />
+        </section>
+    )
+}
+
+export default ClientDashboard;

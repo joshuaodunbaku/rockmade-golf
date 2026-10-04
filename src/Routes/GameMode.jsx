@@ -1,456 +1,295 @@
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  Card,
-  Button,
-  Row,
-  Col,
-  Form,
-  Container,
-  Modal,
+    Button,
+    Row,
+    Col,
+    Container,
 } from "react-bootstrap";
+import { toast } from "react-toastify";
+import { GoArrowUpRight } from "react-icons/go";
+import { useNavigate, useLocation } from "react-router-dom";
+import { isAfter } from 'date-fns';
+
 import { GameModeCard } from "../Styles/HomeStyle";
-import IMAGES from "../assets/images";
 import HeroComp from "../Components/HeroComp";
+import IMAGES from "../assets/images";
+import crypt from "../Utils/crypto-helper";
+import { gameModes } from "../Utils/data";
+import handleErrMsg from '../Utils/error-handler';
+import { useAuthUser } from "../app-context/user-context";
+import useCourseController from "../api-controllers/course-controller-hook";
+import useGameController from "../api-controllers/game-controller-hook";
+import CourseSetup from "../Components/CourseSetup";
+import { useActiveCourses } from "../app-context/active-courses-context";
+import GameSetup from "../Components/GameSetup";
+import PlayerSelection from "../Components/PlayerSelection";
+import { useGame } from "../app-context/game-context";
 
 const GameMode = () => {
-  const [step, setStep] = useState(1);
+    const controllerRef = useRef(new AbortController());
+    
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  // Global states for selections
-  const [gameMode, setGameMode] = useState("");
-  const [course, setCourse] = useState("");
-  const [holeType, setHoleType] = useState("18");
-  const [gameFormat, setGameFormat] = useState("Stroke Play");
-  const [features, setFeatures] = useState({});
-  const [players, setPlayers] = useState(["You", "", "", ""]); // 4 slots
-  const [showModal, setShowModal] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+    const { setCourses, setLoading } = useActiveCourses();
+    const { limitGameCourseSearch, gameCourseSearch } = useCourseController();
+    const { createGame } = useGameController();
+    const { authUser } = useAuthUser();    
+    const { setGamePlay, setGroups } = useGame();
+    const user = authUser();
 
-  const gameModes = [
-    {
-      name: "Member Game",
-      desc: "Perfect for casual play or practice. Invite friends or join a friendly round at registered golf courses near you.",
-      image: IMAGES.image3,
-    },
-    {
-      name: "Tournament Game",
-      desc: "Compete in structured competitions and climb the leaderboard.",
-      image: IMAGES.image5,
-    },
-    {
-      name: "Versus Game",
-      desc: "Perfect for casual play or practice. Invite friends or join a friendly round at registered golf courses near you.",
-      image: IMAGES.image2,
-    },
-  ];
+    const [step, setStep] = useState(1);
+    
+    const [networkRequest, setNetworkRequest] = useState(false);
+	const [courseSettingData, setCourseSettingData] = useState(null);
+    
+    // Global states for selections
+    const [gameMode, setGameMode] = useState("");
+    const [course, setCourse] = useState({});
+    const [gameGroupArr, setGameGroupArr] = useState([]);
+    const [ongoingRound, setOngoingRound] = useState(null);
+    const [heroText, setHeroText] = useState("Our Game Modes");
+    const [rounds, setRounds] = useState(1); // rounds to send to backend
 
-  const courses = [
-    "Ijebu Golf Club",
-    "Lagos Golf Course",
-    "Ibadan View Course",
-  ];
+    useEffect(() => {
+        if(user && crypt.decryptData(user.mode) === '0'){
+            // staff now allowed, because user.sub for staff will be undefined
+            toast.info("Only subscribed memebers are allowed to create games");
+            // navigate to dashboard
+            navigate('/dashboard');
+            return;
+        }
+        if(user && user.sub && isAfter(new Date(), new Date(crypt.decryptData(user.sub)).setHours(23, 59, 59, 0))){
+            // navigate to sub page
+            navigate('/memberships');
+            return;
+        }
+        // Cancel any previous in-flight request
+        if (controllerRef.current) {
+            controllerRef.current.abort();
+        }
+        initialize();
 
-  const specialFeatures = [
-    "Port-Not-Port",
-    "Beddy No Beddy",
-    "Mulligan",
-    "Longest Drive",
-    "Closest to Pin",
-  ];
+        return () => {
+            // This cleanup function runs when the component unmounts or when the dependencies of useEffect change (e.g., route change)
+            controllerRef.current.abort();
+            // clear the newly created ongoing game in context
+            setGamePlay(null);
+        };
+    }, [location.pathname]);
 
-  const registeredPlayers = [
-    {
-      name: "Obarinsola Olatunji",
-      image: IMAGES.player1,
-      handicap: "+2",
-      tee: "60",
-    },
-    {
-      name: "Olumide Olumide",
-      image: IMAGES.player2,
-      handicap: "0",
-      tee: "58",
-    },
-    {
-      name: "Joshua Josh",
-      image: IMAGES.player3,
-      handicap: "+1",
-      tee: "59",
-    },
-    {
-      name: "Charles Bob",
-      image: IMAGES.player4,
-      handicap: "-1",
-      tee: "61",
-    },
-    {
-      name: "Henry Danger",
-      image: IMAGES.player5,
-      handicap: "+3",
-      tee: "62",
-    },
-    {
-      name: "Jesse Lee Peterson",
-      image: IMAGES.player6,
-      handicap: "+4",
-      tee: "57",
-    },
-  ];
+    const initialize = async () => {
+        try {
+            controllerRef.current = new AbortController();
+            setNetworkRequest(true);
+            const response = await limitGameCourseSearch(controllerRef.current.signal, 10);
+            setCourses(response.data);
+            setLoading(false);
 
-  return (
-    <>
-      <HeroComp $heroImage={IMAGES.image4}>
-        <h2 className="text-center mb-4 display-5 fw-bold">Our Game Modes</h2>
-      </HeroComp>
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    }
 
-      <Container className="mt-5" id="section_3">
-        {step === 1 && (
-          <div className="text-center">
-            <h2 className="mb-4">Choose Game Mode</h2>
-            <Row>
-              {gameModes.map((mode, index) => (
-                <Col
-                  key={index}
-                  md={4}
-                  className="mb-4"
-                  onClick={() => {
-                    setGameMode(mode.name);
-                    setStep(2); // move immediately to next step
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  <GameModeCard
-                    bg={mode.image}
-                    className={
-                      gameMode === mode.name
-                        ? "border border-danger border-2"
-                        : ""
-                    }
-                  >
-                    <div className="overlay d-flex flex-column justify-content-center align-items-center">
-                      <h2>{mode.name}</h2>
-                      <p>{mode.desc}</p>
-                    </div>
-                  </GameModeCard>
-                </Col>
-              ))}
-            </Row>
-          </div>
-        )}
-        {step === 2 && (
-          <div className="p-5 border rounded-4 bg-light shadow">
-            <div className="text-center">
-              <h2 className="mb-4">
-                Select Course & Hole Type{" "}
-                {gameMode && (
-                  <span className="badge text-bg-info">
-                    <small>{gameMode}</small>
-                  </span>
-                )}
-              </h2>
-              <Form className="mb-3">
-                <Form.Group className="mb-3">
-                  <Form.Label>Choose Course</Form.Label>
-                  <Form.Select
-                    value={course}
-                    onChange={(e) => setCourse(e.target.value)}
-                  >
-                    <option value="">Select Course</option>
-                    {courses.map((location, idx) => (
-                      <option key={idx} value={location}>
-                        {location}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+	const submitCourse = (data) => {
+        setCourse(data);
+        /*  temporarily set gamPlay in context to use in GameSetup jsx. The format of data object is a little different from the expected gamePlay object. But this sets up an object to use
+            in GameSetup for game creation to continue. When create Game button is clicked in GameSetup jsx, the returned response will then be used to set up the gamePlay object in context
+        */
+        setGamePlay(data);
+        setCourseSettingData(data);
+        setHeroText('Add Contests to spice up game');
+        setStep(3);
+    };
 
-                <Form.Group>
-                  <Form.Label>Choose Hole Type</Form.Label>
-                  <Form.Select
-                    value={holeType}
-                    onChange={(e) => setHoleType(e.target.value)}
-                  >
-                    <option value="18">Full 18 Holes</option>
-                    <option value="9-front">Front 9</option>
-                    <option value="9-back">Back 9</option>
-                  </Form.Select>
-                </Form.Group>
-              </Form>
-              <Button
-                variant="secondary"
-                onClick={() => setStep(1)}
-                className="me-2"
-              >
-                Back
-              </Button>
-              <Button disabled={!course} onClick={() => setStep(3)}>
-                Next
-              </Button>
-            </div>
-          </div>
-        )}
-        {step === 3 && (
-          <div className="p-5 border rounded-4 bg-light shadow">
-            <div>
-              <h2 className="mb-4 text-center">Game Setup</h2>
-              <Form>
-                {/* Game Format */}
-                <Form.Group className="mb-3">
-                  <Form.Label>Game Format</Form.Label>
-                  <Form.Select
-                    value={gameFormat}
-                    onChange={(e) => setGameFormat(e.target.value)}
-                  >
-                    <option>Stroke Play</option>
-                    <option>Stableford</option>
-                  </Form.Select>
-                </Form.Group>
+    const setHolesContests = (arr) => {
+        const c = {...course};
+        c.contests = arr;
+        setCourse(c);
+        setCourseSettingData(c);
+    }
+    
+    const setNewRounds = (round) => {
+        setRounds(round);
+    }
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Assign Features Per Hole</Form.Label>
-                  <div
-                    className="border p-3 rounded bg-white"
-                    style={{
-                      maxHeight: "500px",
-                      overflowY: "auto",
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(220px, 1fr))",
-                      gap: "1rem",
-                    }}
-                  >
-                    {[...Array(holeType === "18" ? 18 : 9)].map((_, idx) => {
-                      const holeNumber = idx + 1;
-                      return (
+    const setUpGame = async () => {
+        try {
+            // Cancel previous request if it exists
+            if (controllerRef.current) {
+                controllerRef.current.abort();
+            }
+            controllerRef.current = new AbortController();
+            setNetworkRequest(true);
+            const data = {
+                contests: course.contests,
+                startDate: course.startDate,
+                course_id: course.course.value.id,
+                hole_mode: course.hole_mode.value,
+                name: course.name,
+                mode: gameMode.id,
+                rounds
+            };
+            const response = await createGame(controllerRef.current.signal, data);
+            setOngoingRound(response.data);
+            // save actual game play. Read comment in submitCourse function to understand
+            setGamePlay(response.data);
+            buildGameGroup(response.data);
+            setHeroText('Create Groups and Add Players');
+            setStep(4);
+            setNetworkRequest(false);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+    const asyncCourseSearch = async (inputValue, callback) => {
+        /*  refs: https://stackoverflow.com/questions/65963103/how-can-i-setup-react-select-to-work-correctly-with-server-side-data-by-using  */
+        try {
+            setNetworkRequest(true);
+            resetAbortController();
+            const response = await gameCourseSearch(controllerRef.current.signal, inputValue);
+            const results = response.data.map(course => ({label: course.name, value: course}));
+            setCourses(response.data);
+            setNetworkRequest(false);
+            callback(results);
+        } catch (error) {
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                // Request was intentionally aborted, handle silently
+                return;
+            }
+            setNetworkRequest(false);
+            toast.error(handleErrMsg(error).msg);
+        }
+    };
+
+    const gotoGame = () => {
+        const nameArr = ongoingRound.name.split(' ');
+        const strName = nameArr.join('+');
+        navigate(`/dashboard/client/${ongoingRound.id}/game/${strName}`);
+    };
+
+	const buildGameGroup = (game) => {
+        const arr = [];
+        game.users.forEach(user => {
+            if(user.UserGameGroup.round_no === game.current_round){
+                const group = arr.find(g => g.name === user.UserGameGroup.name);
+                if(group){
+                    group.members.push(user);
+                }else {
+                    arr.push({
+                        name: user.UserGameGroup.name,
+                        members: [user]
+                    })
+                }
+            }
+        });
+        // setGameGroupArr(arr);
+        setGroups(arr);
+    };
+
+    const resetAbortController = () => {
+        // Cancel previous request if it exists
+        if (controllerRef.current) {
+            controllerRef.current.abort();
+        }
+        controllerRef.current = new AbortController();
+    };
+
+    return (
+        <>
+            <HeroComp $heroImage={IMAGES.image4}>
+                <h2 className="text-center mb-4 display-5 fw-bold"> { heroText }</h2>
+            </HeroComp>
+
+            <Container className="mt-5" id="section_3">
+                {/* small progress bar (optional: insert above content) */}
+                <div className="mb-4">
+                    <h5 className="fw-bold">Setup Progress</h5>
+                    <div className="progress" style={{ height: "20px", borderRadius: "10px" }} >
                         <div
-                          key={idx}
-                          className="p-3 border rounded bg-light"
-                          style={{ minWidth: "200px" }}
+                              className={`progress-bar ${step === 5 ? "bg-success" : "bg-info"} progress-bar-striped progress-bar-animated`}
+                              role="progressbar"
+                              style={{width: `${(step / 5) * 100}%`,transition: "width 0.5s ease",}}
                         >
-                          <h6 className="fw-bold text-center">
-                            Hole {holeNumber}
-                          </h6>
-                          {specialFeatures.map((f, i) => (
-                            <Form.Check
-                              key={i}
-                              type="checkbox"
-                              label={f}
-                              checked={
-                                features[holeNumber]?.includes(f) || false
-                              }
-                              onChange={() => {
-                                setFeatures((prev) => {
-                                  const updated = { ...(prev || {}) };
-                                  const holeFeatures =
-                                    updated[holeNumber] || [];
-
-                                  if (holeFeatures.includes(f)) {
-                                    updated[holeNumber] = holeFeatures.filter(
-                                      (feat) => feat !== f
-                                    );
-                                  } else {
-                                    updated[holeNumber] = [...holeFeatures, f];
-                                  }
-
-                                  return updated;
-                                });
-                              }}
-                            />
-                          ))}
+                            {Math.round((step / 5) * 100)}%
                         </div>
-                      );
-                    })}
-                  </div>
-                </Form.Group>
-              </Form>
-
-              <div className="text-center">
-                <Button
-                  variant="secondary"
-                  onClick={() => setStep(2)}
-                  className="me-2"
-                >
-                  Back
-                </Button>
-                <Button onClick={() => setStep(4)}>Next</Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div className="p-5 border rounded-4 bg-light shadow">
-            <div className="text-center">
-              <h2 className="mb-4">Add Players</h2>
-
-              {/* PLAYER GRID */}
-              <div className="mb-4">
-                <h5 className="text-start fw-bold mb-3">Group 1</h5>
-
-                <div
-                  className="player-grid"
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(160px, 1fr))",
-                    gap: "1rem",
-                  }}
-                >
-                  {players.map((player, idx) => (
-                    <div
-                      key={idx}
-                      className="p-3 border rounded bg-white d-flex flex-column align-items-center justify-content-center shadow-sm"
-                      style={{
-                        minHeight: "150px",
-                        cursor: idx === 0 ? "default" : "pointer",
-                      }}
-                      onClick={() => {
-                        if (idx !== 0) {
-                          setSelectedSlot(idx);
-                          setShowModal(true);
-                        }
-                      }}
-                    >
-                      {player ? (
-                        <>
-                          <img
-                            src={player.image}
-                            alt={player.name}
-                            style={{
-                              width: "60px",
-                              height: "60px",
-                              borderRadius: "50%",
-                              objectFit: "cover",
-                              marginBottom: "0.5rem",
-                            }}
-                          />
-                          <h6 className="fw-bold">{player.name}</h6>
-                          <small className="text-muted">
-                            HC: {player.handicap} | Tee: {player.tee}
-                          </small>
-                        </>
-                      ) : (
-                        <div className="text-center text-muted">
-                          <div
-                            style={{
-                              width: "50px",
-                              height: "50px",
-                              borderRadius: "50%",
-                              background: "#e9ecef",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: "24px",
-                              margin: "0 auto 0.5rem",
-                            }}
-                          >
-                            +
-                          </div>
-                          <span>Add Player</span>
-                        </div>
-                      )}
                     </div>
-                  ))}
                 </div>
-              </div>
 
-              {/* NAVIGATION */}
-              <div className="mt-4">
-                <Button
-                  variant="secondary"
-                  onClick={() => setStep(3)}
-                  className="me-2"
-                >
-                  Back
-                </Button>
-                <Button
-                  variant="success"
-                  onClick={() => alert("Game Started!")}
-                >
-                  Start Game
-                </Button>
-              </div>
-            </div>
+                {step === 1 && (
+                    <div className="text-center mb-5">
+                        <h2 className="mb-4">Choose Game Mode</h2>
+                        <Row>
+                            {gameModes.map((mode, index) => (
+                                <Col key={index} md={4} className={mode.availability === true ? "mb-4" : "mb-4 disabledDiv"}
+                                    onClick={() => {
+                                        setGameMode(mode);
+                                        setStep(2); // move immediately to next step
+                                        setHeroText('Golf Course Selection & Holes');
+                                    }}
+                                    style={{ cursor: "pointer" }}
+                                >
+                                    <GameModeCard bg={mode.image} className={gameMode === mode.name ? "border border-danger border-2" : "" } >
+                                        <div className="overlay d-flex flex-column justify-content-center align-items-center">
+                                            <h2>{mode.name}</h2>
+                                            <p>{mode.desc}</p>
+                                        </div>
+                                    </GameModeCard>
+                                </Col>
+                            ))}
+                        </Row>
+                    </div>
+                )}
 
-            {/* PLAYER SELECTION MODAL */}
-            {/* PLAYER SELECTION MODAL */}
-            <Modal
-              show={showModal}
-              onHide={() => {
-                setShowModal(false);
-                setSelectedSlot(null);
-              }}
-              centered
-            >
-              <Modal.Header closeButton>
-                <Modal.Title>Select a Player</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="d-flex flex-column gap-2">
-                  {registeredPlayers.map((thatRegisteredPlayer, index) => {
-                    const alreadyPicked = players.some(
-                      (p) => p && p.name === thatRegisteredPlayer.name
-                    );
+                {step === 2 && 
+                    <CourseSetup 
+                        data={courseSettingData} 
+                        gameMode={gameMode.name} 
+                        handleSaveCourseSetting={submitCourse} 
+                        asyncCourseSearch={asyncCourseSearch}
+                        handleCancel={() => {
+                            setStep(1);
+                            setHeroText('Our Game Modes');
+                        }} 
+                        btnRedText='Back' btnBlueText='Next' />}
+                {step === 3 && 
+                    <GameSetup 
+                        gameMode={gameMode.name} 
+                        setUpGame={setUpGame} 
+                        handleCancel={() => {
+                            setStep(2);
+                            setHeroText('Golf Course Selection & Holes');
+                        }} 
+                        networkRequest={networkRequest}
+                        btnRedText={'Back'}
+                        setHolesContests={setHolesContests}
+                        setRounds={setNewRounds} />}
 
-                    return (
-                      <div
-                        key={index}
-                        className={`p-3 border rounded d-flex align-items-center shadow-sm ${
-                          alreadyPicked
-                            ? "bg-dark-subtle text-muted"
-                            : "hover-bg-light"
-                        }`}
-                        style={{
-                          cursor: alreadyPicked ? "not-allowed" : "pointer",
-                        }}
-                        onClick={() => {
-                          if (selectedSlot === null || alreadyPicked) return;
-                          const newPlayers = [...players];
-                          newPlayers[selectedSlot] = thatRegisteredPlayer;
-                          setPlayers(newPlayers);
-                          setShowModal(false);
-                          setSelectedSlot(null);
-                        }}
-                      >
-                        <img
-                          src={thatRegisteredPlayer.image}
-                          alt={thatRegisteredPlayer.name}
-                          style={{
-                            width: "50px",
-                            height: "50px",
-                            borderRadius: "50%",
-                            objectFit: "cover",
-                            marginRight: "1rem",
-                            opacity: alreadyPicked ? 0.5 : 1,
-                          }}
-                        />
-                        <div className="flex-grow-1">
-                          <h6 className="fw-bold mb-0">
-                            {thatRegisteredPlayer.name}
-                          </h6>
-                          <small className="text-muted">
-                            HC: {thatRegisteredPlayer.handicap} | Tee:{" "}
-                            {thatRegisteredPlayer.tee}
-                          </small>
+                {step === 4 && <PlayerSelection />}
+                {step === 4 && 
+                    <div className='row mb-5'>
+                        <div className="col-12 d-flex align-items-center justify-content-center">
+                            <Button variant="success" className="fw-bold col-12 col-md-4" onClick={gotoGame} >
+                                <GoArrowUpRight size='32px' /> Go to game
+                            </Button>
                         </div>
-                        {alreadyPicked && (
-                          <span
-                            className="badge bg-success"
-                            style={{ fontSize: "0.8rem" }}
-                          >
-                            ✓ Selected
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </Modal.Body>
-            </Modal>
-          </div>
-        )}
-      </Container>
-    </>
-  );
+                    </div>
+                }
+            </Container>
+        </>
+    );
 };
 
 export default GameMode;

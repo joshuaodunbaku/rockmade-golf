@@ -1,3 +1,9 @@
+# Test files
+src/test.css
+src/test.jsx
+src/test2.jsx
+src/test3.jsx
+
 # Logs
 logs
 *.log
@@ -11,6 +17,9 @@ node_modules
 dist
 dist-ssr
 *.local
+
+package-lock.json
+crypto-helper.js
 
 # Editor directories and files
 .vscode/*

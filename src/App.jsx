@@ -1,40 +1,82 @@
-import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import NavBar from "./Components/Navbar/NavBar.jsx";
+import { ToastContainer } from "react-toastify";
+
 import Home from "./Routes/Home.jsx";
-import HomePage from "./test2.jsx";
-import HomePageTwo from "./test3.jsx";
-import GolfCourseRegistration from "./Routes/GolfCourseRegistration.jsx";
 import About from "./Routes/About.jsx";
 import Memberships from "./Routes/Memberships.jsx";
 import GameMode from "./Routes/GameMode.jsx";
-import GameSetupWizard from "./test.jsx";
-import Footer from "./Components/Footer.jsx";
+import LoginPage from "./Routes/LoginPage.jsx";
+import SignUpPage from "./Routes/SignupPage.jsx";
+import PlayerRegistrationPage from "./Routes/PlayerRegistrationPage.jsx";
+import ScoreTable from './Routes/ScoreTable';
+import PageNotFound from './Routes/PageNotFound';
+import { ProtectedRoute } from './Routes/ProtectedRoute';
+import StaffLogin from "./Routes/StaffLogin.jsx";
+import GolfCourseCreation from "./Routes/Dashboard/staff-dashboard/GolfCourseCreation.jsx";
+import Courses from "./Routes/Dashboard/staff-dashboard/courses/Courses.jsx";
+import GolfCourseView from "./Routes/Dashboard/staff-dashboard/courses/GolfCourseView.jsx";
+import Contests from "./Routes/Dashboard/staff-dashboard/Contests.jsx";
+import Staff from "./Routes/Dashboard/staff-dashboard/users/Staff.jsx";
+import GameBoard from "./Routes/Dashboard/client-dashboard/game-board/GameBoard.jsx";
+import Dashboard from "./Routes/Dashboard/MainDashboard.jsx";
+import Profile from "./Routes/Dashboard/MyProfilePage/MainProfile.jsx";
+import GameHistory from "./Routes/Dashboard/client-dashboard/game-history/GameHistory.jsx";
+import GameSummary from "./Routes/Dashboard/client-dashboard/game-history/GameSummary.jsx";
+import PlayerInfo from "./Routes/Dashboard/client-dashboard/game-history/PlayerInfo.jsx";
+import Players from "./Routes/Dashboard/client-dashboard/Players.jsx";
+import MembershipPlans from "./Routes/Dashboard/staff-dashboard/MembershipPlans.jsx";
+import ContinueEmailUpdate from "./Routes/ContinueEmailUpdate.jsx";
+import PaystackTransactionVerification from "./Routes/PaystackTransactionVerification.jsx";
+import TermsAndAgreementReview from "./Routes/Dashboard/staff-dashboard/TermsAndAgreementReview.jsx";
+import TermsAndAgreement from "./Routes/TermsAndAgreement.jsx";
+import ViewGame from "./Routes/Dashboard/client-dashboard/ViewGame.jsx";
 
 function App() {
-  return (
-    <>
-      <NavBar />
-      <Routes>
-        <Route index path="/" element={<Home />} />
-        <Route index path="about" element={<About />} />
-        <Route index path="memberships" element={<Memberships />} />
-        <Route index path="gameMode" element={<GameMode />} />
+    return (
+        <>
+            <Routes>
+                <Route index path="/" element={<Home />} />
+                <Route index path="about" element={<About />} />
+                <Route index path="memberships" element={<Memberships />} />
 
-        <Route
-          path="golfCourseRegistration"
-          element={<GolfCourseRegistration />}
-        />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/staff/login" element={<StaffLogin />} />
+                <Route path="/register"  element={<PlayerRegistrationPage />} />
+                <Route path="/terms-and-policy"  element={<TermsAndAgreement />} />
+                <Route path="profile/:user_type/email/update/:nano_id"  element={<ContinueEmailUpdate />} />
 
-        {/* test pages */}
-        <Route path="gamemodetest" element={<GameSetupWizard />} />
-        <Route path="homepage" element={<HomePage />} />
-        <Route path="secondHomepage" element={<HomePageTwo />} />
-      </Routes>
-      <Footer />
-      {/* <Footer /> */}
-    </>
-  );
+                <Route path="/dashboard" element={<ProtectedRoute />}>
+                    <Route index path="game/create" element={<GameMode />} />
+                    <Route index path="contests" element={<Contests />} />
+                    <Route index path="users" element={<Staff />} />
+                    <Route index path="profile" element={<Profile />} />
+                    <Route path="staff" >
+                        <Route path="courses" >
+                            <Route path=":id/view" element={<GolfCourseView />} />
+				            <Route path="create" element={<GolfCourseCreation />} />
+				            <Route path="" element={<Courses />} />
+                        </Route>
+                        <Route index path="membership/plans" element={<MembershipPlans />} />
+                        <Route index path="tc" element={<TermsAndAgreementReview />} />
+                    </Route>
+                    <Route path="client" >
+                        <Route path=":nano_id/game/view/:name" element={<ViewGame />} />
+                        <Route path=":nano_id/game/:name" element={<GameBoard />} />
+                        <Route path=":user_nano_id/games/history" element={<GameHistory />} />
+                        <Route path="games/history/summary/:name" element={<GameSummary />} />
+                        <Route path="games/player/:name" element={<PlayerInfo />} />
+                        <Route path="players/list" element={<Players />} />
+                        <Route path="profile/transactions/verify/:reference"  element={<PaystackTransactionVerification />} />
+                    </Route>
+					<Route path={""} element={<Dashboard />} />
+                </Route>
+
+                <Route path="score" element={<ScoreTable />} />
+				<Route path="*" element={<PageNotFound />} />
+            </Routes>
+			<ToastContainer />
+        </>
+    );
 }
 
 export default App;
