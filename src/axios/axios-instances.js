@@ -5,7 +5,9 @@ import axios from 'axios';
 */
 
 // TODO: always check
-const BACKEND_API_URL = "http://localhost:2026";
+// Set VITE_API_URL (see .env.example) to point at a deployed backend.
+// Falls back to the local backend when the variable is not set.
+const BACKEND_API_URL = import.meta.env.VITE_API_URL || "http://localhost:2026";
 // const BACKEND_API_URL = "https://www.rootfillindustries.com";
 // const BACKEND_API_URL = "http://192.168.0.163:5173";
 // const BACKEND_API_URL = "http://192.168.88.59:8082";
